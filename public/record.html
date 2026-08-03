@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mizo — Record detail · wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mizo.css"/>
+</head>
+<body data-page="record">
+<header class="nav"></header>
+
+<main class="wrap" style="padding-top:26px">
+
+  <div class="between" style="margin-bottom:18px">
+    <span class="kicker">§9.1 · record detail · the buy decision</span>
+    <a class="mono-sm muted" href="storefront.html?c=hood">← back to the store</a>
+  </div>
+
+  <div class="rd">
+
+    <!-- LEFT: the record (cover + obi + state) -->
+    <div class="stack">
+      <div class="obi-card hero" style="border-width:1.5px">
+        <div class="obi">
+          <div class="grade-b" id="obiGrade">MINT</div>
+          <div class="v" id="obiChain">HoodX</div>
+          <div class="dot"></div>
+        </div>
+        <div class="cover d1" style="border-left:1.5px solid var(--ink)"><div class="glyph" id="cvGlyph">溝</div></div>
+      </div>
+
+      <div class="between">
+        <span class="state sealed" id="stPill">STILL SEALED</span>
+        <span class="mono-sm muted">obi intact · never opened</span>
+      </div>
+
+      <div class="grade" style="justify-self:start">
+        <span class="g" id="gBadge">MINT</span>
+        <span class="txt">graded <b id="gAge">4m</b> ago
+          <small>LP burned · mint authority revoked · no sell tax</small>
+        </span>
+      </div>
+      <a class="mono-sm muted" href="#" style="text-decoration:underline">→ read the published grading rubric (§6)</a>
+    </div>
+
+    <!-- RIGHT: title, chart, stats, buy -->
+    <div class="stack">
+      <div class="between" style="align-items:flex-end">
+        <div>
+          <h1 class="display" id="tName" style="font-size:40px">Groove Theory</h1>
+          <span class="mono-sm muted" id="tTkr">$GROOVE · HoodX · launched 2h ago</span>
+        </div>
+        <div class="bar">
+          <span class="chip">◇ site</span><span class="chip">✕ x</span><span class="chip">✉ tg</span>
+        </div>
+      </div>
+
+      <div class="chartbox"></div>
+
+      <div class="panel pad">
+        <div class="between" style="margin-bottom:8px">
+          <span class="kicker">bonding curve · making it onto the wall</span>
+          <span class="mono-sm">66% → graduation</span>
+        </div>
+        <div class="progress"><i></i></div>
+      </div>
+
+      <div class="grid g2">
+        <div class="panel pad">
+          <span class="kicker">the record</span>
+          <div class="kv" style="margin-top:10px">
+            <span class="k">price</span><span id="kPrice">$0.0042</span>
+            <span class="k">market cap</span><span id="kMcap">$412K</span>
+            <span class="k">liquidity</span><span>$96K</span>
+            <span class="k">holders</span><span>1,204</span>
+            <span class="k">top-10</span><span>18% (under floor)</span>
+            <span class="k">contract</span><span class="muted">7xKp…9fQ2 ⧉</span>
+          </div>
+        </div>
+        <div class="buywidget">
+          <div class="hd"><span class="kicker" style="align-self:center">buy · trade-in at the till</span><span class="mono-sm muted">4 taps to signed</span></div>
+          <div class="presets">
+            <span class="p">0.01</span><span class="p on">0.1</span><span class="p">0.5</span><span class="p">custom</span>
+          </div>
+          <div style="padding:14px">
+            <div class="kv" style="margin-bottom:12px">
+              <span class="k">you pay</span><span>0.1 SOL</span>
+              <span class="k">you get</span><span>≈ 23,800 GROOVE</span>
+              <span class="k">grade now</span><span>MINT · still sealed</span>
+            </div>
+            <button class="btn block">Connect wallet to buy</button>
+            <p class="mono-sm muted center" style="margin:10px 0 0">Browsing is free. A grade describes on-chain properties, not merit.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <b>States this screen must handle (§9.1):</b> pre-graduation · graduated · cut-out · ungraded · external token (D4 — trade anything the router supports, else view-only off-platform).
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="ft"></footer>
+<script src="app.js"></script>
+<script>
+  const q = new URLSearchParams(location.search);
+  const tkr = q.get('t'); const c = q.get('c');
+  const t = TOKENS.find(x=>x[0] && x[1]===tkr) || TOKENS[0];
+  const info = CHAINS.find(x=>x.slug===(c||t[2])) || CHAINS[0];
+  const [name,ticker,chain,grade,state,price,mcap,age,dens,glyph] = t;
+  document.getElementById('tName').textContent = name;
+  document.getElementById('tTkr').textContent = `$${ticker} · ${info.name} · launched ${age} ago`;
+  document.getElementById('kPrice').textContent = price;
+  document.getElementById('kMcap').textContent = mcap;
+  document.getElementById('obiGrade').textContent = grade.replace('NEAR MINT','NM');
+  document.getElementById('gBadge').textContent = grade;
+  document.getElementById('obiChain').textContent = info.name;
+  document.getElementById('cvGlyph').textContent = glyph;
+  const pill = document.getElementById('stPill');
+  pill.textContent = state==='SEALED'?'STILL SEALED':(state==='CUT-OUT'?'CUT-OUT':'OPENED');
+  pill.className = 'state ' + (state==='SEALED'?'sealed':(state==='CUT-OUT'?'cut':''));
+</script>
+</body>
+</html>

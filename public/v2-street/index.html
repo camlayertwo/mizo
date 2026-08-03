@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mizo — v2 · The Street · wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../mizo.css"/>
+<style>
+  html,body{height:100%;}
+  body.street{overflow-x:hidden;}
+  .st-wrap{max-width:1180px;margin:0 auto;padding:18px 20px 80px;}
+
+  /* top hub bar */
+  .st-top{display:flex;align-items:center;gap:14px;border-bottom:1.5px solid var(--ink);padding:12px 0 14px;margin-bottom:14px;}
+  .st-top .mark{font-family:var(--hand);font-size:34px;line-height:.9;}
+  .st-top .kanji{font-family:var(--hand);font-size:18px;color:var(--grey-1);}
+  .st-top .grow{flex:1;}
+
+  /* aggregate leaderboard ribbon above the street */
+  .leader{border:1.5px solid var(--ink);background:var(--ink);color:var(--band-ink);overflow:hidden;height:30px;display:flex;align-items:center;margin-bottom:22px;}
+  .leader .lt{display:inline-flex;gap:30px;white-space:nowrap;padding-left:100%;animation:lscroll 38s linear infinite;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;}
+  .leader .lt b{font-weight:700;}
+  @keyframes lscroll{to{transform:translateX(-100%);}}
+
+  /* ---- isometric street ---- */
+  .scene{background:var(--paper-2);border:1.5px solid var(--ink);padding:60px 0 80px;position:relative;overflow:hidden;}
+  .scene .skyline{position:absolute;inset:0;background:
+     repeating-linear-gradient(90deg,transparent 0 78px,var(--hair) 78px 79px),
+     repeating-linear-gradient(0deg,transparent 0 78px,var(--hair) 78px 79px);
+     opacity:.6;}
+  .scene .caption{position:absolute;top:12px;left:16px;font-size:9.5px;text-transform:uppercase;letter-spacing:.16em;color:var(--grey-1);z-index:3;}
+  .scene .street{position:relative;z-index:2;display:flex;justify-content:center;gap:40px;flex-wrap:wrap;
+    transform:rotateX(52deg) rotateZ(45deg);transform-style:preserve-3d;padding:20px 40px;}
+
+  .shop{width:140px;cursor:pointer;position:relative;transition:transform .15s;}
+  .shop:hover{transform:translate(-6px,-6px);}
+  .shop .roof{height:26px;border:1.5px solid var(--ink);border-bottom:0;background:var(--card);}
+  .shop .face{height:120px;border:1.5px solid var(--ink);background:var(--paper);position:relative;box-shadow:7px 7px 0 var(--ink);}
+  .shop .face .hatch{position:absolute;inset:12px;border:1.5px solid var(--ink);}
+  .shop .awn{position:absolute;top:0;left:0;right:0;height:14px;background:repeating-linear-gradient(90deg,var(--ink) 0 6px,transparent 6px 12px);}
+  .shop .door{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:34px;height:44px;border:1.5px solid var(--ink);border-bottom:0;background:var(--card);}
+  .shop .sign{position:absolute;bottom:8px;left:8px;right:8px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;background:var(--card);border:1.5px solid var(--ink);padding:2px 4px;text-align:center;}
+  /* upright label so the iso street stays readable */
+  .shop .plate{position:absolute;top:-46px;left:-6px;transform:rotateZ(-45deg) rotateX(-52deg);
+    font-family:var(--hand);font-size:20px;white-space:nowrap;}
+  .shop .plate small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--grey-1);text-transform:uppercase;}
+  .shop.closed{opacity:.5;}
+  .shop.closed .sign{color:var(--grey-1);}
+
+  .st-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:20px;font-size:10.5px;color:var(--grey-1);}
+  .st-legend b{color:var(--ink);}
+
+  /* ---- store takeover overlay ---- */
+  .takeover{position:fixed;inset:0;z-index:70;background:var(--paper);display:none;flex-direction:column;}
+  .takeover.on{display:flex;}
+  .to-band{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:14px 22px;border-bottom:1.5px solid var(--ink);background:var(--card);}
+  .to-band .patch{width:46px;height:46px;border:1.5px solid var(--ink);}
+  .to-band h2{font-family:var(--hand);font-weight:400;font-size:30px;line-height:1;}
+  .to-loading{height:3px;background:var(--ink);width:0;transition:width .5s ease;}
+  .to-body{flex:1;overflow-y:auto;padding:22px;}
+  .to-nextdoor{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;}
+  .nd{cursor:pointer;border:1.5px solid var(--ink);background:var(--card);padding:5px 10px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:6px;}
+  .nd .patch{width:14px;height:14px;border:1.5px solid var(--ink);}
+  .nd:hover{box-shadow:var(--shadow);transform:translate(-1px,-1px);}
+  .nd.on{background:var(--ink);color:var(--paper);}
+  .nd.on .patch{border-color:var(--paper);}
+  .to-close{position:fixed;right:16px;top:14px;z-index:75;border:1.5px solid var(--ink);background:var(--card);font-family:var(--mono);font-size:11px;padding:5px 12px;cursor:pointer;}
+
+  /* hatch patterns (chain = pattern only, never colour) */
+  .p1{background:repeating-linear-gradient(45deg,var(--ink) 0 2px,transparent 2px 5px);}
+  .p2{background:repeating-linear-gradient(0deg,var(--ink) 0 2px,transparent 2px 6px);}
+  .p3{background:radial-gradient(var(--ink) 30%,transparent 32%);background-size:6px 6px;}
+  .p4{background:repeating-linear-gradient(90deg,var(--ink) 0 1px,transparent 1px 4px);}
+  .p5{background:repeating-linear-gradient(-45deg,var(--ink) 0 3px,transparent 3px 6px);}
+  .p6{background:var(--ink);}
+</style>
+</head>
+<body class="street">
+
+<div class="st-wrap">
+  <div class="st-top">
+    <span class="mark">Mizo</span><span class="kanji">溝</span>
+    <div style="line-height:1.3">
+      <div class="kicker">v2 · the street</div>
+      <div class="mono-sm muted">the hub is a night street of storefronts · one shop per chain · step in to commit, next-door to switch</div>
+    </div>
+    <span class="grow"></span>
+    <a class="btn ghost" href="../versions.html">← versions</a>
+  </div>
+
+  <div class="leader"><div class="lt">
+    <span>AGGREGATE LEADERBOARD ·</span>
+    <span class="up">GROOVE <b>+42%</b> · HoodX</span><span>1STP <b>$5.1M</b> · HoodX</span>
+    <span>NGHT <b>+9%</b> · SolX</span><span>OBI <b>$3.4M</b> · HoodX</span>
+    <span>DEEP <b>+27%</b> · SolX</span><span>WLBL <b>$610K</b> · BaseX</span>
+    <span>6 STORES OPEN · $4.2M BRIDGED · 312 LAUNCHES TODAY</span>
+  </div></div>
+
+  <div class="scene">
+    <div class="skyline"></div>
+    <span class="caption">click a storefront to enter · iso night street · greyscale wireframe</span>
+    <div class="street" id="street"></div>
+  </div>
+
+  <div class="st-legend">
+    <span><b>Enter a shop</b> → full chain takeover (the store)</span>
+    <span><b>Next-door</b> → switch chains without leaving</span>
+    <span><b>Leaderboard</b> aggregates every street</span>
+    <span><b>+ soon</b> = dark storefront, chain not open yet</span>
+  </div>
+</div>
+
+<!-- store takeover -->
+<div class="takeover" id="takeover">
+  <div class="to-band">
+    <span class="patch" id="toPatch"></span>
+    <div><h2 id="toName">HoodX</h2><span class="mono-sm muted">entered the store · committed · step next-door to switch</span></div>
+    <div style="text-align:right"><div class="mono-sm muted">vol 24h</div><div class="mono-sm"><b id="toVol">$620K</b></div></div>
+  </div>
+  <div class="to-loading" id="toLoad"></div>
+  <div class="to-body">
+    <div class="to-nextdoor" id="nextdoor"></div>
+    <div class="wall-head"><span class="n">The Wall</span><span class="c">graduated · ranked · behind the counter</span></div>
+    <div class="grid g4" id="toWall" style="margin-bottom:26px"></div>
+    <div class="wall-head"><span class="n">The Bin</span><span class="c">every launch on this chain · flip through</span></div>
+    <div class="grid g6" id="toBin"></div>
+  </div>
+</div>
+<button class="to-close" id="toClose" style="display:none">close ✕</button>
+
+<script src="../app.js"></script>
+<script>
+(function(){
+  var STATS={hood:'$620K',sol:'$1.2M',base:'$88K',bnb:'$210K',ton:'$74K',eth:'$1.8M'};
+  var street=document.getElementById('street');
+  // build storefronts (last one "soon" = closed)
+  street.innerHTML = CHAINS.map(function(c,i){
+    return '<div class="shop'+(i===5?'':'')+'" data-chain="'+c.slug+'">'+
+      '<div class="plate">'+c.kanji+'<small>'+c.name+'</small></div>'+
+      '<div class="roof"></div>'+
+      '<div class="face"><div class="awn"></div><div class="hatch '+c.patch+'"></div>'+
+      '<div class="sign">'+c.name+'</div><div class="door"></div></div></div>';
+  }).join('') +
+  '<div class="shop closed" data-soon><div class="plate">来<small>soon</small></div>'+
+  '<div class="roof"></div><div class="face"><div class="awn"></div>'+
+  '<div class="hatch" style="border-style:dashed"></div><div class="sign">+ soon</div><div class="door"></div></div></div>';
+
+  var to=document.getElementById('takeover');
+
+  function enter(slug){
+    var c=CHAINS.find(function(x){return x.slug===slug;});
+    document.getElementById('toPatch').className='patch '+c.patch;
+    document.getElementById('toName').textContent=c.name;
+    document.getElementById('toVol').textContent=STATS[slug]||'$—';
+    // next-door switcher
+    document.getElementById('nextdoor').innerHTML = CHAINS.map(function(x){
+      return '<div class="nd'+(x.slug===slug?' on':'')+'" data-chain="'+x.slug+'"><span class="patch '+x.patch+'"></span>'+x.name+'</div>';
+    }).join('');
+    document.querySelectorAll('#nextdoor .nd').forEach(function(n){
+      n.addEventListener('click',function(){ enter(n.dataset.chain); });
+    });
+    // grids
+    var pool=TOKENS.filter(function(t){return t[2]===slug;});
+    if(!pool.length) pool=TOKENS;
+    renderGrid('#toWall', pool.concat(TOKENS).slice(0,8), 'wall');
+    renderGrid('#toBin', pool, 'bin');
+    // loading transition
+    var bar=document.getElementById('toLoad'); bar.style.width='0';
+    to.classList.add('on'); document.getElementById('toClose').style.display='block';
+    requestAnimationFrame(function(){ bar.style.width='100%'; });
+    document.querySelector('.to-body').scrollTop=0;
+  }
+
+  document.querySelectorAll('.shop[data-chain]').forEach(function(s){
+    s.addEventListener('click',function(){ enter(s.dataset.chain); });
+  });
+  document.getElementById('toClose').addEventListener('click',function(){
+    to.classList.remove('on'); this.style.display='none';
+  });
+})();
+</script>
+</body>
+</html>

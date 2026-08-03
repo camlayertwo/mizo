@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mizo — Storefront · wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mizo.css"/>
+</head>
+<body data-page="store">
+<header class="nav"></header>
+
+<main class="wrap">
+
+  <!-- THEMED HEADER BAND (chain colour lives here) -->
+  <section class="panel" style="margin:26px 0 8px; overflow:hidden">
+    <div style="display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:20px; padding:24px 26px;
+                background: var(--paper-3);">
+      <div style="display:flex; align-items:center; gap:16px">
+        <span id="storeMark" style="width:52px;height:52px;border-radius:12px;background:var(--ink);color:var(--paper);
+              display:flex;align-items:center;justify-content:center"></span>
+        <div>
+          <h1 class="display" id="storeName" style="font-size:38px">HoodX</h1>
+          <span class="kicker">store mark + chain accent · themed band, not a bespoke scene</span>
+        </div>
+      </div>
+      <div></div>
+      <a class="btn" href="launch.html">Launch on <span id="storeName2">HoodX</span> →</a>
+    </div>
+    <div class="strip" style="box-shadow:none;border-radius:0;border-top:1px solid var(--hair)">
+      <div><div class="n">148</div><div class="l">records in store</div></div>
+      <div><div class="n">12</div><div class="l">on the wall</div></div>
+      <div><div class="n">$620K</div><div class="l">volume 24h</div></div>
+      <div><div class="n">31</div><div class="l">launched today</div></div>
+      <div><div class="n">4</div><div class="l">graduated today</div></div>
+      <div><div class="n">2–3d</div><div class="l">store age</div></div>
+    </div>
+  </section>
+
+  <div class="between" style="margin:18px 0 22px">
+    <span class="kicker">jump stores · you never leave the hub</span>
+    <div class="bar" id="chainRow"></div>
+  </div>
+
+  <!-- THE WALL (12, ranked) -->
+  <div class="wall-head">
+    <span class="n">The Wall</span>
+    <span class="c">§5.1 · behind the counter · graduated · 12 slots, ranked, mechanical entry (VG+ or better)</span>
+  </div>
+  <div class="grid g4" id="theWall"></div>
+
+  <hr class="rule"/>
+
+  <!-- THE BIN (all new arrivals) -->
+  <div class="wall-head">
+    <span class="n">The Bin</span>
+    <span class="c">§5.4 · every launch on this chain · flip through</span>
+  </div>
+  <div class="bar" data-tabs style="margin-bottom:18px">
+    <span class="tab on">New</span><span class="tab">Movers</span><span class="tab">Ungraded</span><span class="tab">Sealed</span>
+    <span class="sep"></span>
+    <a class="tab" href="storefront-cutout.html" onclick="return false" style="cursor:default">Cut-out bin →</a>
+  </div>
+  <div class="grid g6" id="theBin"></div>
+
+  <div class="note" style="margin-top:24px">
+    <b>New-chain runbook (§15):</b> this whole page is one template. A new chain needs a name, a mark, one accent colour, native/gas symbol, explorer pattern, RPC and a route slug. Target: live storefront in under two hours of config, zero design hours.
+  </div>
+
+</main>
+
+<footer class="ft"></footer>
+<script src="app.js"></script>
+<script>
+  // read ?c= chain
+  const c = new URLSearchParams(location.search).get('c') || 'hood';
+  const info = CHAINS.find(x=>x.slug===c) || CHAINS[0];
+  document.getElementById('storeName').textContent = info.name;
+  document.getElementById('storeName2').textContent = info.name;
+  document.getElementById('storeMark').innerHTML = `<span class="cico" style="width:28px;height:28px;color:var(--paper)">${ICONS[c]||''}</span>`;
+  chainRow('#chainRow', c);
+  const chainTokens = TOKENS.filter(t=>t[2]===c);
+  const pool = chainTokens.length ? chainTokens : TOKENS; // fallback for thin stores
+  renderGrid('#theWall', pool.concat(TOKENS).slice(0,8), 'wall');
+  renderGrid('#theBin', TOKENS, 'bin');
+</script>
+</body>
+</html>

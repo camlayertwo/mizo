@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mizo — v1 · The Rail · wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/mizo.css"/>
+<link rel="stylesheet" href="/v1-rail/shell.css"/>
+</head>
+<body class="railapp">
+
+<!-- ============ LEFT RAIL ============ -->
+<aside class="rail">
+  <button class="rail-mark on" data-hub><span class="m">溝</span><span class="k">hub</span></button>
+  <div class="rail-div"></div>
+  <div class="rail-chains" id="railChains"></div>
+  <div class="rail-div"></div>
+  <button class="rail-btn rail-act" data-view="launch"><span class="ic">＋</span><span class="nm">launch</span></button>
+  <button class="rail-btn rail-act" data-view="swap"><span class="ic">⇅</span><span class="nm">swap</span></button>
+  <button class="rail-btn rail-act" data-view="bridge"><span class="ic">⇄</span><span class="nm">bridge</span></button>
+  <div class="rail-spacer"></div>
+  <button class="rail-wallet">connect<b>wallet</b></button>
+</aside>
+
+<!-- ============ CANVAS ============ -->
+<div class="canvas">
+  <div class="canvas-in">
+    <div class="main-col">
+
+      <!-- context bar -->
+      <div class="ctxbar">
+        <span class="crumb">Mizo <b id="crumb">· hub · all chains</b></span>
+        <span class="grow"></span>
+        <div class="qswap" id="qswap">
+          <span class="chip" data-qtoggle>quick swap chain ▾</span>
+          <div class="qswap-menu" id="qswapMenu"></div>
+        </div>
+      </div>
+
+      <!-- STORE / HUB VIEW -->
+      <section class="view on" data-view="store">
+        <div class="storeband" id="storeband" style="display:none">
+          <div class="band-patch"><span class="patch" id="bandPatch"></span><span class="kj" id="bandKj">林</span></div>
+          <div class="band-copy">
+            <h2 id="bandName">HoodX</h2>
+            <span class="mono-sm muted">committed store · rail locked to this chain · hop anytime</span>
+          </div>
+          <div class="band-side">
+            <span class="mono-sm muted">vol 24h</span><span class="mono-sm"><b id="bandVol">$620K</b></span>
+            <span class="mono-sm muted">launched today</span><span class="mono-sm">31</span>
+          </div>
+        </div>
+
+        <div class="between" style="margin:2px 0 14px">
+          <span class="kicker" id="wallLbl">§ hub · every launch, every chain · big-cover launchpad</span>
+          <span class="mono-sm muted">colour = chain only · shown as hatch</span>
+        </div>
+        <div class="bigwall" id="bigwall"></div>
+      </section>
+
+      <!-- SWAP VIEW -->
+      <section class="view" data-view="swap">
+        <div class="between" style="margin:2px 0 16px">
+          <h1 class="display" style="font-size:30px">Swap · the back room</h1>
+          <span class="tag proposal">gasless · MEV-shielded</span>
+        </div>
+        <div class="bigpanel stack">
+          <div class="swapleg">
+            <div class="top"><span>you pay</span><span>balance 4.20 ETH · EthX</span></div>
+            <div class="between"><span class="amt">1.00</span><span class="chain-sw"><span class="patch p6"></span><span class="nm">ETH ▾</span></span></div>
+          </div>
+          <div class="center" style="margin:-4px 0"><span class="chip">⇅ route</span></div>
+          <div class="swapleg">
+            <div class="top"><span>you receive</span><span>≈ 182.4 · TonX</span></div>
+            <div class="between"><span class="amt">182.4</span><span class="chain-sw"><span class="patch p5"></span><span class="nm">TON ▾</span></span></div>
+          </div>
+          <div class="panel pad"><div class="kv">
+            <span class="k">route</span><span>ETH → intent solver → TON · 1 hop</span>
+            <span class="k">gas</span><span>gasless · paid in output</span>
+            <span class="k">protection</span><span>MEV-shielded · private mempool</span>
+          </div></div>
+          <button class="btn block">Connect wallet to swap</button>
+        </div>
+      </section>
+
+      <!-- BRIDGE VIEW -->
+      <section class="view" data-view="bridge">
+        <div class="between" style="margin:2px 0 16px">
+          <h1 class="display" style="font-size:30px">Bridge · the import counter</h1>
+          <span class="tag proposal">single "bridge &amp; buy" intent</span>
+        </div>
+        <div class="bigpanel stack">
+          <div class="swapleg">
+            <div class="top"><span>move in</span><span>balance 1,240 USDT · EthX</span></div>
+            <div class="between"><span class="amt">500</span><span class="chain-sw"><span class="patch p6"></span><span class="nm">USDT · ETH ▾</span></span></div>
+          </div>
+          <div class="center" style="margin:-4px 0"><span class="chip">⇄ bridge</span></div>
+          <div class="swapleg">
+            <div class="top"><span>arrives on</span><span>≈ 498 · TonX</span></div>
+            <div class="between"><span class="amt">498</span><span class="chain-sw"><span class="patch p5"></span><span class="nm">TON ▾</span></span></div>
+          </div>
+          <div class="panel pad"><div class="kv">
+            <span class="k">route</span><span>EthX → TonX · one signature</span>
+            <span class="k">eta</span><span>~40s</span>
+            <span class="k">fee</span><span>0.05% · shown once</span>
+          </div></div>
+          <button class="btn block">Connect wallet to bridge</button>
+        </div>
+      </section>
+
+      <!-- LAUNCH VIEW -->
+      <section class="view" data-view="launch">
+        <div class="between" style="margin:2px 0 16px">
+          <h1 class="display" style="font-size:30px">Launch a record</h1>
+          <span class="tag proposal">chain picker → cover → cut &amp; confirm</span>
+        </div>
+        <div class="note"><b>Rail model:</b> Launch keeps the persistent rail + dock. The center becomes the launch flow; the committed chain in the rail pre-selects your launch chain. Full flow lives in <a href="../launch.html">launch.html</a>.</div>
+      </section>
+
+    </div>
+
+    <!-- ============ RIGHT DOCK — always-on swap/bridge ============ -->
+    <aside class="dock">
+      <div class="dock-hd"><span class="kicker">always-on · swap / bridge</span></div>
+      <div class="toggle" data-toggle style="margin-bottom:2px"><b class="on">Swap</b><b>Bridge</b></div>
+      <div class="swapleg">
+        <div class="top"><span>pay</span><span>4.20 ETH</span></div>
+        <div class="between"><span class="amt">1.00</span><span class="chain-sw"><span class="patch p6"></span><span class="nm">ETH ▾</span></span></div>
+      </div>
+      <div class="dock-flip">⇅</div>
+      <div class="swapleg">
+        <div class="top"><span>receive</span><span>≈ 182.4</span></div>
+        <div class="between"><span class="amt">182.4</span><span class="chain-sw"><span class="patch p5"></span><span class="nm">TON ▾</span></span></div>
+      </div>
+      <div class="mono-sm muted" style="line-height:1.6">gasless · MEV-shielded · 1 hop. The dock never leaves — trade from any store without losing your place.</div>
+      <button class="btn block" style="margin-top:auto">Connect wallet</button>
+    </aside>
+  </div>
+</div>
+
+<a class="backpill" href="../versions.html">← compare versions</a>
+
+<script src="/app.js"></script>
+<script>
+(function(){
+  var STATS = { hood:'$620K', sol:'$1.2M', base:'$88K', bnb:'$210K', ton:'$74K', eth:'$1.8M' };
+  // build rail chain buttons
+  var rc = document.getElementById('railChains');
+  rc.innerHTML = CHAINS.map(function(c){
+    return '<button class="rail-btn" data-chain="'+c.slug+'">'+
+      '<span class="kj">'+c.kanji+'</span>'+
+      '<span class="patch '+c.patch+'"></span>'+
+      '<span class="nm">'+c.name+'</span></button>';
+  }).join('');
+  // quick-swap menu
+  document.getElementById('qswapMenu').innerHTML = CHAINS.map(function(c){
+    return '<button data-chain="'+c.slug+'"><span class="patch '+c.patch+'"></span>'+c.name+'</button>';
+  }).join('');
+
+  function paintGrid(slug){
+    var list = slug ? TOKENS.filter(function(t){return t[2]===slug;}) : TOKENS;
+    if(!list.length) list = TOKENS;
+    if(!slug) list = TOKENS;
+    renderGrid('#bigwall', list.length?list:TOKENS, 'wall');
+  }
+
+  function commit(slug){
+    // views back to store
+    showView('store');
+    document.querySelectorAll('.rail-btn').forEach(function(b){b.classList.remove('on');});
+    document.querySelector('.rail-mark').classList.toggle('on', !slug);
+    var band = document.getElementById('storeband');
+    if(slug){
+      var c = CHAINS.find(function(x){return x.slug===slug;});
+      document.querySelector('.rail-btn[data-chain="'+slug+'"]').classList.add('on');
+      band.style.display = 'grid';
+      var p = document.getElementById('bandPatch');
+      p.className = 'patch '+c.patch;
+      document.getElementById('bandName').textContent = c.name;
+      document.getElementById('bandKj').textContent = c.kanji;
+      document.getElementById('bandVol').textContent = STATS[slug]||'$—';
+      document.getElementById('crumb').innerHTML = '· '+c.name+' · committed';
+      document.getElementById('wallLbl').textContent = '§ '+c.name+' store · the wall + the bin · committed';
+      paintGrid(slug);
+    } else {
+      band.style.display = 'none';
+      document.getElementById('crumb').innerHTML = '· hub · all chains';
+      document.getElementById('wallLbl').textContent = '§ hub · every launch, every chain · big-cover launchpad';
+      paintGrid(null);
+    }
+  }
+
+  function showView(v){
+    document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('on', s.dataset.view===v);});
+  }
+
+  // wire rail
+  document.querySelector('.rail-mark').addEventListener('click', function(){ commit(null); });
+  document.querySelectorAll('.rail-btn[data-chain]').forEach(function(b){
+    b.addEventListener('click', function(){ commit(b.dataset.chain); });
+  });
+  document.querySelectorAll('.rail-act').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.rail-btn').forEach(function(x){x.classList.remove('on');});
+      showView(b.dataset.view);
+      document.getElementById('crumb').innerHTML = '· '+b.dataset.view;
+    });
+  });
+  // quick-swap dropdown
+  var qs = document.getElementById('qswap');
+  qs.querySelector('[data-qtoggle]').addEventListener('click', function(e){ e.stopPropagation(); qs.classList.toggle('open'); });
+  document.addEventListener('click', function(){ qs.classList.remove('open'); });
+  qs.querySelectorAll('button[data-chain]').forEach(function(b){
+    b.addEventListener('click', function(){ commit(b.dataset.chain); qs.classList.remove('open'); });
+  });
+  // dock toggle
+  document.querySelectorAll('.toggle[data-toggle] b').forEach(function(b){
+    b.addEventListener('click', function(){
+      b.parentElement.querySelectorAll('b').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on');
+    });
+  });
+
+  // boot: hub aggregate
+  commit(null);
+})();
+</script>
+</body>
+</html>

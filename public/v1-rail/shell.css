@@ -1,0 +1,172 @@
+/* ============================================================
+   MIZO v1 "THE RAIL" — nav-shell styles only.
+   Everything visual reuses ../mizo.css. This file is layout +
+   rail/dock chrome for the app-shell variant.
+   ============================================================ */
+
+html, body { height: 100%; }
+body.railapp { overflow-x: hidden; }
+
+/* chain hatch patches, unscoped (mizo.css scopes them under .chain-sw).
+   Same six patterns, reusable in the rail, quick-swapper and store band. */
+.railapp .patch.p1 { background: repeating-linear-gradient(45deg,var(--ink) 0 2px,transparent 2px 5px); }
+.railapp .patch.p2 { background: repeating-linear-gradient(0deg,var(--ink) 0 2px,transparent 2px 6px); }
+.railapp .patch.p3 { background: radial-gradient(var(--ink) 30%, transparent 32%); background-size:6px 6px; }
+.railapp .patch.p4 { background: repeating-linear-gradient(90deg,var(--ink) 0 1px,transparent 1px 4px); }
+.railapp .patch.p5 { background: repeating-linear-gradient(-45deg,var(--ink) 0 3px,transparent 3px 6px); }
+.railapp .patch.p6 { background: var(--ink); }
+
+/* ---------- left rail ---------- */
+.rail {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 72px; z-index: 50;
+  background: var(--card);
+  border-right: 1.5px solid var(--ink);
+  display: flex; flex-direction: column; align-items: stretch;
+}
+.rail-mark {
+  appearance: none; height: 62px; flex: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  cursor: pointer; border: 0; background: transparent; color: var(--ink);
+  font-family: var(--hand);
+}
+.rail-mark .m { font-size: 19px; line-height: 1; }
+.rail-mark .k { font-size: 12px; color: var(--grey-1); }
+.rail-mark:hover { background: var(--paper-2); }
+.rail-mark.on { background: var(--ink); color: var(--paper); }
+.rail-mark.on .k { color: var(--grey-3); }
+
+.rail-div { height: 1.5px; background: var(--line); margin: 0 12px; flex: none; }
+
+.rail-chains { display: flex; flex-direction: column; overflow-y: auto; }
+
+.rail-btn {
+  appearance: none; border: 0; background: transparent; color: var(--ink);
+  font-family: var(--mono); cursor: pointer; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 9px 0 8px; position: relative;
+}
+.rail-btn:hover { background: var(--paper-2); }
+.rail-btn .patch { width: 26px; height: 26px; border: 1.5px solid var(--ink);
+  background-color: var(--card); flex: none; }
+.rail-btn .nm { font-size: 7.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--grey-1); }
+.rail-btn .kj { position: absolute; top: 6px; right: 9px; font-family: var(--hand);
+  font-size: 9px; color: var(--grey-2); }
+.rail-btn.on { background: var(--ink); color: var(--paper); }
+.rail-btn.on .nm { color: var(--paper); }
+.rail-btn.on .kj { color: var(--grey-3); }
+/* active: patch sits paper-backed so its ink hatch stays readable on ink fill */
+.rail-btn.on .patch { border-color: var(--paper); background-color: var(--paper); }
+.rail-btn.on .patch.p6 { background: var(--paper); }
+
+/* action icons (Launch / Swap / Bridge) */
+.rail-act .ic { font-size: 15px; line-height: 1; font-family: var(--mono); }
+
+.rail-spacer { flex: 1 1 auto; min-height: 8px; }
+
+.rail-wallet {
+  appearance: none; margin: 8px 7px 12px; border: 1.5px solid var(--ink); background: var(--paper);
+  font-family: var(--mono); font-size: 7.5px; text-transform: uppercase;
+  letter-spacing: .06em; padding: 6px 2px; text-align: center; cursor: pointer;
+  color: var(--ink);
+}
+.rail-wallet:hover { box-shadow: var(--shadow); transform: translate(-1px,-1px); }
+.rail-wallet b { display: block; font-size: 9px; letter-spacing: .03em; }
+
+/* ---------- main canvas ---------- */
+.canvas { margin-left: 72px; min-height: 100vh; }
+.canvas-in { display: grid; grid-template-columns: 1fr 300px; align-items: start; }
+.canvas-in.nodock { grid-template-columns: 1fr; }
+.main-col { min-width: 0; padding: 0 18px 60px 18px; }
+
+/* ---------- slim top context bar ---------- */
+.ctxbar {
+  position: sticky; top: 0; z-index: 40; height: 46px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 18px; margin: 0 -18px 14px;
+  background: color-mix(in srgb, var(--paper) 90%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1.5px solid var(--ink);
+}
+.ctxbar .crumb { font-size: 10px; text-transform: uppercase; letter-spacing: .16em;
+  color: var(--grey-1); white-space: nowrap; }
+.ctxbar .crumb b { color: var(--ink); }
+.ctxbar .grow { flex: 1; }
+
+/* quick chain-swapper dropdown */
+.qswap { position: relative; }
+.qswap-menu {
+  display: none; position: absolute; top: calc(100% + 4px); right: 0; z-index: 45;
+  border: 1.5px solid var(--ink); background: var(--card); min-width: 156px;
+  box-shadow: var(--shadow);
+}
+.qswap.open .qswap-menu { display: block; }
+.qswap-menu button {
+  appearance: none; border: 0; border-bottom: 1.5px solid var(--line);
+  width: 100%; background: transparent; font-family: var(--mono); font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--ink);
+  display: flex; align-items: center; gap: 8px; padding: 7px 10px; cursor: pointer;
+}
+.qswap-menu button:last-child { border-bottom: 0; }
+.qswap-menu button:hover { background: var(--paper-2); }
+.qswap-menu button.on { background: var(--ink); color: var(--paper); }
+.qswap-menu .patch { width: 14px; height: 14px; border: 1.5px solid var(--ink);
+  background-color: var(--card); flex: none; }
+.qswap-menu button.on .patch { border-color: var(--paper); background-color: var(--paper); }
+.qswap-menu button.on .patch.p6 { background: var(--paper); }
+
+/* ---------- views ---------- */
+.view { display: none; }
+.view.on { display: block; }
+
+/* chain-store takeover header band */
+.storeband {
+  border: 1.5px solid var(--ink); background: var(--card); margin-bottom: 16px;
+  display: grid; grid-template-columns: 96px 1fr auto; align-items: stretch;
+}
+.storeband .band-patch { border-right: 1.5px solid var(--ink); position: relative; min-height: 96px; }
+.storeband .band-patch .kj {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--hand); font-size: 42px; color: var(--ink);
+  background: color-mix(in srgb, var(--card) 62%, transparent);
+}
+.storeband .band-copy { padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.storeband .band-copy h2 { font-family: var(--hand); font-weight: 400; font-size: 30px; line-height: 1; }
+.storeband .band-side { display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  padding: 0 18px; border-left: 1.5px solid var(--line); text-align: right; }
+
+/* big-cover launchpad grid: the coins ARE the art */
+.bigwall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.bigwall .obi-card .cover .glyph { font-size: 76px; }
+@media (max-width: 1500px) { .bigwall { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 1100px) { .bigwall { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---------- right-docked mini swap/bridge widget ---------- */
+.dock {
+  position: sticky; top: 0; align-self: start;
+  border-left: 1.5px solid var(--ink); background: var(--card);
+  min-height: 100vh; padding: 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.dock .dock-hd { display: flex; align-items: center; justify-content: space-between; }
+.dock .swapleg { padding: 10px 12px; }
+.dock .swapleg .amt { font-size: 20px; }
+.dock-flip { text-align: center; font-size: 12px; color: var(--grey-1); margin: -4px 0; }
+
+/* full-canvas swap / bridge panels */
+.bigpanel { max-width: 560px; margin: 24px auto 0; }
+.bigpanel .swapleg .amt { font-size: 30px; }
+
+/* back-to-compare pill */
+.backpill {
+  position: fixed; right: 14px; bottom: 14px; z-index: 60;
+  font-family: var(--mono); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: .12em; border: 1.5px solid var(--ink); background: var(--card);
+  color: var(--ink); padding: 7px 11px; border-radius: 99px;
+}
+.backpill:hover { box-shadow: var(--shadow); transform: translate(-1px,-1px); }
+
+/* responsive: dock folds under on narrow screens */
+@media (max-width: 900px) {
+  .canvas-in { grid-template-columns: 1fr; }
+  .dock { min-height: 0; border-left: 0; border-top: 1.5px solid var(--ink); position: static; }
+  .bigwall { grid-template-columns: repeat(2, 1fr); }
+}

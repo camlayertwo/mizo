@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mizo — Collection · wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mizo.css"/>
+</head>
+<body data-page="collection">
+<header class="nav"></header>
+
+<main class="wrap" style="padding-top:26px">
+
+  <div class="between" style="margin-bottom:8px">
+    <div>
+      <span class="kicker">§5.1 · the most selective screen in the product</span>
+      <h1 class="display" style="font-size:52px; margin-top:6px">Mizo's Collection</h1>
+    </div>
+    <div class="bar">
+      <span class="chip">◂</span><span class="chip on" style="background:var(--ink);color:var(--paper)">August 2026</span><span class="chip">▸</span>
+    </div>
+  </div>
+
+  <p class="sub" style="max-width:60ch; color:var(--ink-2); margin:0 0 6px">
+    Twelve slots, across every chain, versioned monthly. The most selective wall in the store — twelve against every token on every network. <span class="jp">帯</span>
+  </p>
+  <p class="display" style="font-size:24px; margin:0 0 24px">"Mizo doesn't have opinions. He has standards."</p>
+
+  <!-- criteria band -->
+  <div class="panel" style="margin-bottom:28px">
+    <div class="between" style="padding:14px 18px; border-bottom:1.5px solid var(--ink)">
+      <span class="kicker">published criteria · nothing sits here unearned</span>
+      <a class="mono-sm muted" href="#" style="text-decoration:underline">read the full rubric §6</a>
+    </div>
+    <div class="grid g4" style="gap:0">
+      <div style="padding:16px 18px"><div class="kicker">grade floor</div><div class="display" style="font-size:22px">NEAR MINT+</div></div>
+      <div style="padding:16px 18px; border-left:1.5px solid var(--line)"><div class="kicker">min age</div><div class="display" style="font-size:22px">7 days</div></div>
+      <div style="padding:16px 18px; border-left:1.5px solid var(--line)"><div class="kicker">still sealed</div><div class="display" style="font-size:22px">required</div></div>
+      <div style="padding:16px 18px; border-left:1.5px solid var(--line)"><div class="kicker">overrides</div><div class="display" style="font-size:22px">none, ever</div></div>
+    </div>
+  </div>
+
+  <!-- the twelve -->
+  <div class="grid g4" id="collGrid"></div>
+
+  <!-- share card -->
+  <div class="grid g2" style="margin-top:30px; grid-template-columns:1fr .8fr; align-items:center">
+    <div class="note"><b>Collection share rate is a success measure (§22).</b> If the Collection isn't being screenshotted, the curation tier isn't earning its build cost. Every slot generates a share card carrying the obi.</div>
+    <div class="bar" style="justify-content:flex-end">
+      <button class="btn ghost">Generate share card ⧉</button>
+      <button class="btn">Share the set ↗</button>
+    </div>
+  </div>
+
+</main>
+
+<footer class="ft"></footer>
+<script src="app.js"></script>
+<script>
+  // collection = the highest-grade tokens, shown as ranked hero cards
+  const order = {'MINT':0,'NEAR MINT':1,'VG+':2,'GOOD':3,'POOR':4,'UNGRADED':5};
+  const twelve = [...TOKENS].sort((a,b)=>order[a[3]]-order[b[3]]).concat(TOKENS).slice(0,12);
+  const el = document.getElementById('collGrid');
+  el.innerHTML = twelve.map((t,i)=>{
+    const card = obiCard(t,'wall');
+    return card.replace('<div class="obi">',
+      `<div class="obi"><div class="v" style="opacity:.7">№ ${String(i+1).padStart(2,'0')}</div>`);
+  }).join('');
+</script>
+</body>
+</html>

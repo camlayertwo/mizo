@@ -1,0 +1,298 @@
+/* ============================================================
+   MIZO v5 "THE HUB" — flat design system.
+   Combines v1 rail + v3 committed-store model, but FLAT:
+   minimal outlines, whitespace + type + cover art carry it.
+   Self-contained (does not load mizo.css).
+   ============================================================ */
+
+:root{
+  --paper:#f3f1ea; --paper-2:#ece9e0; --paper-3:#e4e1d7;
+  --card:#f8f7f2; --ink:#17171a; --ink-2:#3d3d42;
+  --grey-1:#6b6b70; --grey-2:#9a9a9d; --grey-3:#c3c1b9;
+  --hair:#e6e3da; --line:#d9d6cd;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --jp:"Zen Kaku Gothic New","Inter",sans-serif;
+  /* --hand/--clean now resolve to the clean sans (kept as aliases so
+     existing display rules don't need touching) */
+  --hand:var(--sans);
+  --clean:var(--sans);
+  --soft:0 6px 22px rgba(23,23,26,.10);
+  --soft-sm:0 3px 12px rgba(23,23,26,.08);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:13px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:-0.006em;
+}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:0; background:none; color:inherit;}
+
+/* chain hatch chips (colour == chain only; shown as hatch) */
+.hp{display:inline-block; background:var(--paper-3);}
+.hp.p1{background:repeating-linear-gradient(45deg,var(--ink) 0 1.5px,transparent 1.5px 5px);}
+.hp.p2{background:repeating-linear-gradient(0deg,var(--ink) 0 1.5px,transparent 1.5px 6px);}
+.hp.p3{background:radial-gradient(var(--ink) 26%,transparent 28%); background-size:6px 6px;}
+.hp.p4{background:repeating-linear-gradient(90deg,var(--ink) 0 1px,transparent 1px 4px);}
+.hp.p5{background:repeating-linear-gradient(-45deg,var(--ink) 0 2px,transparent 2px 6px);}
+.hp.p6{background:var(--ink);}
+
+.mono-sm{font-size:11px;}
+.muted{color:var(--grey-1);}
+.kick{font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--grey-2);}
+
+/* ============ APP SHELL ============ */
+.app{display:flex; min-height:100vh;}
+
+/* --- global top wallet (sticky, follows everywhere) --- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; height:54px; z-index:60;
+  display:flex; align-items:center; gap:14px; padding:0 20px;
+  background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:blur(10px);
+}
+.topbar .brand{display:flex; align-items:baseline; gap:7px; cursor:pointer;}
+.topbar .brand .mk{font-family:var(--hand); font-size:24px; line-height:1;}
+.topbar .brand .kj{font-family:var(--hand); font-size:13px; color:var(--grey-1);}
+.topbar .brand small{font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--grey-2); margin-left:4px;}
+.topbar .grow{flex:1;}
+.topbar .crumb{font-size:11px; color:var(--grey-1); text-transform:uppercase; letter-spacing:.12em;}
+.topbar .crumb b{color:var(--ink);}
+
+.wallet-pill{
+  display:flex; align-items:center; gap:10px; padding:8px 12px 8px 10px;
+  background:var(--ink); color:var(--paper); border-radius:99px; font-size:11px;
+  letter-spacing:.04em; box-shadow:var(--soft-sm);
+}
+.wallet-pill .dotpatch{width:16px; height:16px; border-radius:50%; background:var(--paper); flex:none;}
+.wallet-pill b{font-weight:700;}
+.wallet-pill .car{opacity:.7;}
+.wallet-pill:hover{transform:translateY(-1px); box-shadow:var(--soft);}
+
+/* ============ LEFT SIDEBAR — 3 zoom states ============ */
+/* state driven by .app class: .zoom-rail | .zoom-list ; homepage = .at-hub (sidebar hidden, stage IS selector) */
+.side{
+  position:fixed; top:54px; bottom:0; left:0; z-index:40;
+  width:74px; background:var(--paper-2);
+  display:flex; flex-direction:column; padding:14px 0 10px;
+  transition:width .18s ease;
+}
+.app.zoom-list .side{width:216px;}
+.app.at-hub .side{width:0; padding:0; overflow:hidden;}
+
+.side .s-lbl{display:none;}
+.app.zoom-list .side .s-lbl{display:block; padding:2px 18px 8px; }
+
+.s-item{
+  display:flex; align-items:center; gap:12px; height:46px; padding:0 24px;
+  color:var(--ink-2); position:relative; white-space:nowrap; overflow:hidden;
+}
+.app:not(.zoom-list) .s-item{justify-content:center; padding:0;}
+.s-item .ic{width:26px; height:26px; flex:none; display:flex; align-items:center; justify-content:center;}
+.s-item .ic .hp{width:22px; height:22px; border-radius:4px;}
+.s-item .ic .sym{font-size:16px; color:var(--grey-1);}
+.s-item .nm{font-size:12px; letter-spacing:.02em; opacity:0;}
+.app.zoom-list .s-item .nm{opacity:1;}
+.s-item:hover{background:var(--paper-3);}
+.s-item.on{background:var(--ink);}
+.s-item.on .nm{color:var(--paper);}
+.s-item.on .ic .sym{color:var(--paper);}
+.s-item.on .ic .hp{outline:2px solid var(--paper); outline-offset:1px;}
+
+.s-div{height:1px; background:var(--hair); margin:10px 18px;}
+.s-spacer{flex:1;}
+
+.s-foot{padding:0 8px; display:flex; flex-direction:column; gap:2px;}
+.s-zoom{
+  display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+  height:38px; color:var(--grey-1); font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+}
+.s-zoom:hover{color:var(--ink);}
+.s-zoom .zic{font-size:15px; line-height:1; flex:none;}
+.s-zoom .zt{opacity:0; width:0; overflow:hidden; white-space:nowrap; transition:opacity .12s ease;}
+.app.zoom-list .s-foot{padding:0 18px;}
+.app.zoom-list .s-zoom{justify-content:flex-start;}
+.app.zoom-list .s-zoom .zt{opacity:1; width:auto;}
+
+/* ============ STAGE ============ */
+.stage{
+  flex:1; margin-left:74px; margin-top:54px; padding:26px 34px 80px;
+  transition:margin-left .18s ease; min-width:0;
+}
+.app.zoom-list .stage{margin-left:216px;}
+.app.at-hub .stage{margin-left:0;}
+
+/* ---- views ---- */
+.view{display:none;}
+.view.on{display:block;}
+
+/* ============ HOMEPAGE / SELECTOR (max zoom-out) ============ */
+.hub-hero{max-width:1000px; margin:18px auto 40px; text-align:center;}
+.hub-hero h1{
+  font-family:var(--hand); font-weight:400; font-size:60px; line-height:1.02;
+  letter-spacing:-.01em; margin-bottom:18px;
+}
+.hub-hero p{font-size:14px; color:var(--grey-1); max-width:560px; margin:0 auto;}
+
+/* peer utilities: swap / bridge / launch on the same level as stores */
+.hub-utils{display:flex; gap:14px; justify-content:center; margin:26px 0 46px; flex-wrap:wrap;}
+.util{
+  display:flex; align-items:center; gap:10px; padding:13px 22px; border-radius:12px;
+  background:var(--card); box-shadow:var(--soft-sm); font-size:13px;
+}
+.util .sym{font-size:17px; color:var(--grey-1);}
+.util:hover{transform:translateY(-2px); box-shadow:var(--soft);}
+.util b{font-weight:700;}
+
+.hub-sechd{display:flex; align-items:baseline; gap:12px; max-width:1180px; margin:0 auto 20px;}
+.hub-sechd h2{font-family:var(--hand); font-weight:400; font-size:22px;}
+
+/* store selector grid — visually focused, flat */
+.stores{
+  max-width:1180px; margin:0 auto;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+}
+@media(max-width:1000px){.stores{grid-template-columns:repeat(2,1fr);}}
+.store{
+  border-radius:16px; overflow:hidden; background:var(--card);
+  box-shadow:var(--soft-sm); transition:transform .16s, box-shadow .16s;
+}
+.store:hover{transform:translateY(-3px); box-shadow:var(--soft);}
+.store .art{height:170px; position:relative; background:var(--paper-3); overflow:hidden;}
+.store .art .hp{position:absolute; inset:0; opacity:.9;}
+.store .art .kj{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--hand); font-size:74px; color:var(--paper);
+  mix-blend-mode:difference; opacity:.92;
+}
+.store .art .soon{position:absolute; top:12px; left:14px; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--paper); background:rgba(23,23,26,.55); padding:3px 8px; border-radius:99px;}
+.store .info{padding:16px 18px 18px; display:flex; align-items:center; gap:14px;}
+.store .info .nm{font-family:var(--hand); font-size:26px; line-height:1;}
+.store .info .sub{font-size:10.5px; color:var(--grey-1); margin-top:3px;}
+.store .info .go{margin-left:auto; font-size:11px; color:var(--grey-1); letter-spacing:.1em; text-transform:uppercase;}
+.store.dark{opacity:.55;}
+.store.dark .art{background:var(--ink);}
+
+/* ============ STORE VIEW (v1-like, NO right dock) ============ */
+.store-hd{display:flex; align-items:center; gap:16px; margin-bottom:8px;}
+.store-hd .patch{width:52px; height:52px; border-radius:12px; flex:none;}
+.store-hd h1{font-family:var(--hand); font-weight:400; font-size:34px; line-height:1;}
+.store-hd .st{margin-left:auto; display:flex; gap:26px;}
+.store-hd .st .n{font-size:16px;}
+.store-hd .st .l{font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--grey-2);}
+.store-sub{color:var(--grey-1); font-size:11.5px; margin-bottom:22px;}
+
+.filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
+.chip{font-size:11px; padding:7px 13px; border-radius:99px; color:var(--grey-1); background:var(--paper-2);}
+.chip.on{background:var(--ink); color:var(--paper);}
+.chip:hover{color:var(--ink);}
+
+/* big-cover launchpad grid — the coins are the art, flat cards */
+.wall{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+@media(max-width:1400px){.wall{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:1000px){.wall{grid-template-columns:repeat(2,1fr);}}
+
+.fcard{display:block; border-radius:14px; overflow:hidden; background:var(--card);
+  box-shadow:var(--soft-sm); transition:transform .14s, box-shadow .14s;}
+.fcard:hover{transform:translateY(-2px); box-shadow:var(--soft);}
+.fcard .cov{height:190px; position:relative; background:var(--paper-3); overflow:hidden;}
+.fcard .cov .g{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--hand); font-size:66px; color:var(--grey-3);}
+.fcard .cov .den{position:absolute; inset:0; opacity:.5;}
+.fcard .cov .grade{position:absolute; top:10px; left:12px; font-size:9px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink); background:color-mix(in srgb,var(--paper) 80%,transparent); padding:2px 7px; border-radius:99px;}
+.fcard .cov .ch{position:absolute; top:10px; right:12px; width:16px; height:16px; border-radius:4px;}
+.fcard .fm{padding:13px 15px 15px;}
+.fcard .fm .r{display:flex; justify-content:space-between; align-items:baseline;}
+.fcard .fm .r b{font-size:14px;}
+.fcard .fm .r.sub{margin-top:4px; font-size:10.5px; color:var(--grey-1);}
+
+/* cover density textures */
+.den.d1{background:radial-gradient(var(--grey-2) 20%,transparent 22%); background-size:14px 14px;}
+.den.d2{background:repeating-linear-gradient(45deg,var(--grey-2) 0 1px,transparent 1px 10px);}
+.den.d3{background:repeating-linear-gradient(0deg,var(--grey-2) 0 1px,transparent 1px 8px);}
+.den.d4{background:repeating-linear-gradient(90deg,var(--grey-2) 0 1px,transparent 1px 12px);}
+
+/* ============ GLOBAL WALLET DRAWER (swap/bridge, cross-chain) ============ */
+.scrim{position:fixed; inset:0; z-index:70; background:rgba(23,23,26,.28); backdrop-filter:blur(2px);
+  opacity:0; pointer-events:none; transition:opacity .2s;}
+.scrim.on{opacity:1; pointer-events:auto;}
+.drawer{
+  position:fixed; top:0; right:0; bottom:0; width:380px; max-width:92vw; z-index:71;
+  background:var(--paper); box-shadow:-12px 0 40px rgba(23,23,26,.16);
+  transform:translateX(100%); transition:transform .22s ease;
+  display:flex; flex-direction:column;
+}
+.drawer.on{transform:translateX(0);}
+.drawer-hd{display:flex; align-items:center; gap:12px; padding:18px 20px 14px;}
+.drawer-hd .mk{font-family:var(--hand); font-size:20px;}
+.drawer-hd .x{margin-left:auto; font-size:18px; color:var(--grey-1); width:30px; height:30px;}
+.drawer-hd .x:hover{color:var(--ink);}
+.drawer-bal{padding:0 20px 14px; display:flex; gap:8px; flex-wrap:wrap;}
+.balchip{display:flex; align-items:center; gap:7px; background:var(--card); border-radius:99px; padding:5px 11px; font-size:11px; box-shadow:var(--soft-sm);}
+.balchip .hp{width:12px; height:12px; border-radius:3px;}
+.drawer-tabs{display:flex; gap:6px; padding:6px 20px 14px;}
+.drawer-tabs b{font-weight:400; font-size:12px; color:var(--grey-1); padding:6px 14px; border-radius:99px; background:var(--paper-2);}
+.drawer-tabs b.on{background:var(--ink); color:var(--paper);}
+.drawer-body{flex:1; overflow-y:auto; padding:0 20px 24px; display:flex; flex-direction:column; gap:12px;}
+.leg{background:var(--card); border-radius:14px; padding:14px 16px; box-shadow:var(--soft-sm);}
+.leg .top{display:flex; justify-content:space-between; font-size:10.5px; color:var(--grey-1); margin-bottom:8px;}
+.leg .amtrow{display:flex; align-items:center; justify-content:space-between;}
+.leg .amt{font-size:26px;}
+.leg .tok{display:flex; align-items:center; gap:8px; font-size:12px; background:var(--paper-2); padding:6px 11px; border-radius:99px;}
+.leg .tok .hp{width:14px; height:14px; border-radius:3px;}
+.leg-mid{text-align:center; color:var(--grey-2); font-size:15px; margin:-4px 0;}
+.route{font-size:11px; color:var(--grey-1); background:var(--card); border-radius:12px; padding:12px 16px; display:grid; gap:6px; box-shadow:var(--soft-sm);}
+.route .rr{display:flex; justify-content:space-between;}
+.route .rr b{color:var(--ink); font-weight:600;}
+.btn-primary{background:var(--ink); color:var(--paper); border-radius:12px; padding:14px; text-align:center; font-size:13px; letter-spacing:.02em;}
+.btn-primary:hover{transform:translateY(-1px); box-shadow:var(--soft);}
+
+@media(max-width:760px){
+  .hub-hero h1{font-size:40px;}
+  .stores{grid-template-columns:1fr;}
+}
+
+/* ============================================================
+   Clean-sans typography pass (Inter). Display faces were tuned
+   for a light brush serif at weight 400; sans needs weight +
+   tighter tracking to read as display type. Kanji mark uses a
+   CJK-capable sans (Inter has no CJK glyphs).
+   ============================================================ */
+.topbar .brand .mk{font-weight:700; letter-spacing:-0.02em;}
+.topbar .brand .kj{font-family:var(--jp); font-weight:500;}
+.drawer-hd .mk{font-weight:700; letter-spacing:-0.02em;}
+.hub-hero h1,
+.hub-sechd h2,
+.store-hd h1,
+.store .info .nm{font-weight:600; letter-spacing:-0.025em;}
+.hub-hero h1{font-weight:700; letter-spacing:-0.03em;}
+
+/* brand logo mark in the top bar */
+.topbar .brand{display:flex; align-items:center; gap:8px;}
+.brand-logo{height:22px; width:auto; display:block; flex:0 0 auto;}
+.drawer-hd .kj{font-family:var(--jp);}
+
+/* all kanji marks render with a CJK-capable sans */
+.kj{font-family:var(--jp);}
+
+/* ---- real chain marks (monochrome, inherit currentColor) ---- */
+.cico{display:inline-flex; align-items:center; justify-content:center; color:var(--ink); line-height:0;}
+.cico svg{width:100%; height:100%; display:block; fill:currentColor;}
+.s-item .ic .cico{width:22px; height:22px; color:var(--grey-1);}
+.s-item:hover .ic .cico{color:var(--ink);}
+.s-item.on .ic .cico{color:var(--paper);}
+.store .art{display:flex; align-items:center; justify-content:center;}
+.store .art .cico.art-ic{width:76px; height:76px; color:var(--ink); opacity:.9;}
+.store:hover .art .cico.art-ic{opacity:1;}
+.store-hd .patch{display:flex; align-items:center; justify-content:center; background:var(--ink);}
+.store-hd .patch .cico{width:30px; height:30px; color:var(--paper);}
+.balchip .cico.bal-ic{width:14px; height:14px; color:var(--ink);}
+.leg .tok .cico{width:14px; height:14px; color:var(--ink);}
+.fcard .cov .ch{display:flex; align-items:center; justify-content:center; background:var(--card); border-radius:5px; box-shadow:var(--soft-sm);}
+.fcard .cov .ch .cico{width:12px; height:12px; color:var(--ink);}
