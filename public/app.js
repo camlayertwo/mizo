@@ -88,67 +88,49 @@ function chainRow(sel, active){
     `<span class="chain-sw" style="opacity:.55"><span class="cico" style="color:var(--grey-2)">＋</span><span class="nm">soon</span></span>`;
 }
 
-/* ---------- v5 app shell: global topbar + 3-zoom sidebar + wallet drawer ----------
-   Wraps every page's existing <main> so the whole product carries the Hub nav
-   structure. Zoom state (rail | names) persists across pages via localStorage. */
+/* ---------- v6 chrome: the handheld DEVICE (nav) + separate WALLET object +
+   portal picker + wallet drawer + pixie page transitions + entry boot ----------
+   The device replaces the old topbar/sidebar and carries across every page. */
+
+const NAV = [
+  { key:'map',       gl:'◉', lb:'World',    href:'index.html' },
+  { key:'discover',  gl:'▤', lb:'Discover', href:'discover.html' },
+  { key:'launch',    gl:'＋', lb:'Launch',  href:'launch.html' },
+  { key:'swap',      gl:'⇅', lb:'Swap',     href:'swap.html' },
+  { key:'bridge',    gl:'⇄', lb:'Bridge',   href:'bridge.html' },
+  { key:'portfolio', gl:'◈', lb:'Wallet',   href:'portfolio.html' },
+];
+
+/* pixie transition: play the dissolve, then run cb (usually navigate) */
+function pixieGo(cb){
+  let px = document.querySelector('.pixie');
+  if(!px){
+    px = document.createElement('div'); px.className='pixie';
+    let sparks=''; for(let i=0;i<14;i++){ sparks+='<span class="spark" style="left:'+(6+Math.random()*88)+'%;top:'+(20+Math.random()*70)+'%;animation-delay:'+(Math.random()*.18)+'s"></span>'; }
+    px.innerHTML = sparks; document.body.appendChild(px);
+  }
+  requestAnimationFrame(()=>px.classList.add('show'));
+  sessionStorage.setItem('mizoNav','1');
+  setTimeout(cb, 360);
+}
+function pixieNav(href){ pixieGo(()=>{ location.href = href; }); }
+window.pixieNav = pixieNav; window.pixieGo = pixieGo;
+
+function locLabel(page, activeChain){
+  if(page==='home') return { loc:'THE WORLD', read:'6 stores open · <span class="blink">▮</span> live' };
+  if(activeChain){ const c = chainBy(activeChain); return { loc:c.name+' STORE', read:c.kanji+' · wall 12 · bin open'}; }
+  const map={ discover:'DISCOVER · ALL CHAINS', launch:'LAUNCH BOOTH', swap:'CROSS-CHAIN SWAP', bridge:'THE BRIDGE',
+    portfolio:'YOUR SHELF', grading:'THE RUBRIC', collection:"MIZO'S COLLECTION", record:'RECORD DETAIL',
+    private:'THE BACK ROOM', cutout:'CUT-OUT BIN' };
+  return { loc: map[page]||'MIZO', read:'greyscale · wireframe' };
+}
+
 function mountShell(page){
   const params = new URLSearchParams(location.search);
-  const activeChain = params.get('c');                 // storefront.html?c=slug
-  const CRUMBS = {
-    launch:'· <b>Launch</b>', swap:'· <b>Swap · Bridge</b>',
-    collection:'· <b>Collection</b>', record:'· <b>Record</b>',
-  };
+  const activeChain = params.get('c');
+  const walletOff = params.get('wallet')==='off';   // ?wallet=off = disconnected state
 
-  // --- topbar ---
-  const top = document.createElement('div');
-  top.className = 'topbar';
-  top.innerHTML =
-    '<a class="brand" href="index.html"><img class="brand-logo" src="logo.svg" alt="Mizo"/>'+
-    '<span class="mk">Mizo</span><span class="kj">溝</span><small>hub</small></a>'+
-    '<span class="crumb">'+(CRUMBS[page]||'')+'</span>'+
-    '<span class="grow"></span>'+
-    '<button class="wallet-pill" id="mzWallet"><span class="dotpatch"></span>'+
-    '<span>wallet · <b>$12,480</b></span><span class="car">▾</span></button>';
-
-  // --- sidebar ---
-  const side = document.createElement('nav');
-  side.className = 'side';
-  side.innerHTML =
-    '<div class="s-lbl kick">stores</div>'+
-    CHAINS.map(c=>
-      '<a class="s-item'+(c.slug===activeChain?' on':'')+'" href="storefront.html?c='+c.slug+'" data-chain="'+c.slug+'">'+
-      '<span class="ic">'+icon(c.slug)+'</span><span class="nm">'+c.name+'</span></a>').join('')+
-    '<div class="s-div"></div>'+
-    '<a class="s-item'+(page==='launch'?' on':'')+'" href="launch.html"><span class="ic"><span class="sym">＋</span></span><span class="nm">Launch</span></a>'+
-    '<button class="s-item" id="mzSwap"><span class="ic"><span class="sym">⇅</span></span><span class="nm">Swap · Bridge</span></button>'+
-    '<div class="s-spacer"></div>'+
-    '<div class="s-foot">'+
-      '<button class="s-zoom" id="mzZoom"><span class="zic" id="mzZoomIc">⟩</span><span class="zt" id="mzZoomLbl">names</span></button>'+
-      '<a class="s-zoom" href="index.html" title="All stores"><span class="zic">⤢</span><span class="zt">all stores</span></a>'+
-    '</div>';
-
-  // --- wallet drawer (global, cross-chain) ---
-  const scrim = document.createElement('div'); scrim.className='scrim';
-  const drawer = document.createElement('aside'); drawer.className='drawer';
-  drawer.innerHTML =
-    '<div class="drawer-hd"><span class="mk">Your wallet</span><button class="x" id="mzDrawerX">✕</button></div>'+
-    '<div class="drawer-bal">'+CHAINS.map(c=>
-      '<span class="balchip">'+icon(c.slug)+c.name.replace('X','')+'</span>').join('')+'</div>'+
-    '<div class="drawer-tabs" id="mzTabs"><b class="on" data-tab="swap">Swap</b><b data-tab="bridge">Bridge</b></div>'+
-    '<div class="drawer-body">'+
-      '<div class="leg"><div class="top"><span id="mzLegA">you pay</span><span>balance 4.20 ETH · EthX</span></div>'+
-      '<div class="amtrow"><span class="amt">1.00</span><span class="tok">'+icon('eth')+'ETH ▾</span></div></div>'+
-      '<div class="leg-mid" id="mzLegMid">⇅</div>'+
-      '<div class="leg"><div class="top"><span id="mzLegB">you receive</span><span>≈ 182.4 · TonX</span></div>'+
-      '<div class="amtrow"><span class="amt">182.4</span><span class="tok">'+icon('ton')+'TON ▾</span></div></div>'+
-      '<div class="route"><div class="rr"><span>route</span><b id="mzRoute">ETH → intent solver → TON · 1 hop</b></div>'+
-      '<div class="rr"><span>gas</span><b>gasless · paid in output</b></div>'+
-      '<div class="rr"><span>protection</span><b>MEV-shielded · private mempool</b></div></div>'+
-      '<div class="mono-sm muted" style="line-height:1.6">Global to Mizo. Your wallet follows you into every store — trade across all chains from one place, wherever you stand.</div>'+
-      '<button class="btn-primary">Connect wallet</button>'+
-    '</div>';
-
-  // --- assemble: move existing <main> (+ footer) into the stage ---
+  // --- assemble stage first (move existing main + footer in) ---
   const main = document.querySelector('main.wrap') || document.querySelector('main');
   const app = document.createElement('div'); app.className='app';
   const stage = document.createElement('main'); stage.className='stage';
@@ -156,15 +138,74 @@ function mountShell(page){
   else { document.body.appendChild(app); }
   const oldFoot = document.querySelector('footer.ft');
   if(oldFoot) stage.appendChild(oldFoot);
-  app.appendChild(side); app.appendChild(stage);
-  document.body.insertBefore(top, document.body.firstChild);
-  document.body.appendChild(scrim); document.body.appendChild(drawer);
-
-  // home page = max zoom-out selector: sidebar collapses away, stage full-width
+  app.appendChild(stage);
   if(page==='home') app.classList.add('at-hub');
-
-  // remove the now-empty legacy header
   const oldHead = document.querySelector('header.nav'); if(oldHead) oldHead.remove();
+
+  // --- brand float (top-left) ---
+  const brand = document.createElement('a');
+  brand.className='brand-float'; brand.href='index.html';
+  brand.innerHTML='<img src="logo.svg" alt="Mizo"/><span class="mk">Mizo</span><span class="kj">溝</span><small>hub</small>';
+  /* navigation handled by the global link interceptor below */
+
+  // --- the device (nav) ---
+  const dev = document.createElement('div'); dev.className='device boot';
+  const L = locLabel(page, activeChain);
+  dev.innerHTML =
+    '<div class="dev-screen"><div class="dev-loc" id="devLoc">'+L.loc+'</div>'+
+      '<div class="dev-read" id="devRead">'+L.read+'</div></div>'+
+    '<span class="dev-openhint" title="open">▸</span>'+
+    '<div class="dev-keys">'+ NAV.map(n=>{
+      const on = (n.key==='map'&&page==='home') || n.key===page || (n.key==='portfolio'&&page==='portfolio');
+      return '<button class="dev-key'+(on?' on':'')+'" data-nav="'+n.key+'" data-href="'+n.href+'">'+
+        '<span class="gl">'+n.gl+'</span><span class="lb">'+n.lb+'</span></button>';
+    }).join('')+'</div>'+
+    '<div class="dev-portal"><button class="pbtn" id="mzPortal"><span class="pdial"></span>portal to a store</button>'+
+      '<button class="dev-collapse" id="mzCollapse" title="tuck away">▁</button></div>';
+
+  // --- portal sheet ---
+  const psheet = document.createElement('div'); psheet.className='portal-sheet';
+  psheet.innerHTML = '<h4>portal to</h4><div class="portal-list">'+
+    CHAINS.map(c=>'<button class="portal-dest'+(c.slug===activeChain?' here':'')+'" data-slug="'+c.slug+'">'+
+      icon(c.slug)+'<span class="pn">'+c.name+'</span><span class="ps">'+(c.slug===activeChain?'you are here':'open')+'</span></button>').join('')+
+    '</div>';
+
+  // --- wallet object (separate, top-right) + drawer ---
+  const wobj = document.createElement('button'); wobj.className='wallet-obj'+(walletOff?' off':'');
+  wobj.id='mzWallet';
+  wobj.innerHTML = walletOff
+    ? '<span class="wchip">連</span><span class="wtxt"><span class="wa">Connect</span><span class="wl">wallet</span></span><span class="car">▾</span>'
+    : '<span class="wchip">財</span><span class="wtxt"><span class="wa">$12,480</span><span class="wl">wallet · 6 chains</span></span><span class="car">▾</span>';
+
+  const scrim = document.createElement('div'); scrim.className='scrim';
+  const drawer = document.createElement('aside'); drawer.className='drawer';
+  drawer.innerHTML =
+    '<div class="drawer-hd"><span class="mk">Your wallet</span><button class="x" id="mzDrawerX">✕</button></div>'+
+    (walletOff
+      ? '<div class="drawer-body"><div class="empty" style="padding:34px 20px"><div class="em-ico">財</div><h3>Not connected</h3><p>Connect to buy, swap, bridge and launch. Browsing every store stays free.</p></div>'+
+        '<button class="btn-primary">Connect wallet</button>'+
+        '<div class="mono-sm muted" style="line-height:1.6">WalletConnect · Phantom · Rabby · MetaMask · Trust · Coinbase. One connection covers every chain.</div></div>'
+      : '<div class="drawer-bal">'+CHAINS.map(c=>'<span class="balchip">'+icon(c.slug)+c.name.replace('X','')+'</span>').join('')+'</div>'+
+        '<div class="drawer-tabs" id="mzTabs"><b class="on" data-tab="swap">Swap</b><b data-tab="bridge">Bridge</b></div>'+
+        '<div class="drawer-body">'+
+          '<div class="leg"><div class="top"><span id="mzLegA">you pay</span><span>balance 4.20 ETH · EthX</span></div>'+
+          '<div class="amtrow"><span class="amt">1.00</span><span class="tok">'+icon('eth')+'ETH ▾</span></div></div>'+
+          '<div class="leg-mid" id="mzLegMid">⇅</div>'+
+          '<div class="leg"><div class="top"><span id="mzLegB">you receive</span><span>≈ 182.4 · TonX</span></div>'+
+          '<div class="amtrow"><span class="amt">182.4</span><span class="tok">'+icon('ton')+'TON ▾</span></div></div>'+
+          '<div class="route"><div class="rr"><span>route</span><b id="mzRoute">ETH → intent solver → TON · 1 hop</b></div>'+
+          '<div class="rr"><span>gas</span><b>gasless · paid in output</b></div>'+
+          '<div class="rr"><span>protection</span><b>MEV-shielded · private mempool</b></div></div>'+
+          '<div class="mono-sm muted" style="line-height:1.6">Global to Mizo. Your wallet follows you into every store — trade across all chains from one place, wherever you stand.</div>'+
+          '<button class="btn-primary">Review &amp; sign</button>'+
+        '</div>');
+
+  document.body.appendChild(brand);
+  document.body.appendChild(dev);
+  document.body.appendChild(psheet);
+  document.body.appendChild(wobj);
+  document.body.appendChild(scrim);
+  document.body.appendChild(drawer);
 
   // footer content
   if(oldFoot) oldFoot.innerHTML =
@@ -172,49 +213,64 @@ function mountShell(page){
     '<div class="col" style="margin-right:auto"><span class="big">Mizo 溝</span>'+
     '<span>The record store for every chain</span><span class="muted">Wireframe · greyscale</span></div>'+
     '<div class="col"><span style="color:var(--ink)">Product</span>'+
-    '<a href="index.html">Discover</a><a href="launch.html">Launch</a>'+
-    '<a href="private.html">Swap · Bridge</a><a href="collection.html">Collection</a></div>'+
+    '<a href="discover.html">Discover</a><a href="launch.html">Launch</a>'+
+    '<a href="swap.html">Swap</a><a href="bridge.html">Bridge</a><a href="collection.html">Collection</a></div>'+
     '<div class="col"><span style="color:var(--ink)">Trust</span>'+
-    '<a href="#">Grading rubric</a><a href="#">Cut-out bin</a>'+
-    '<a href="#">No investment advice</a><a href="#">Terms</a></div>'+
+    '<a href="grading.html">Grading rubric</a><a href="storefront-cutout.html">Cut-out bin</a>'+
+    '<a href="private.html">Private swap</a><a href="#">No investment advice</a></div>'+
     '<div class="col grade-legend"><span style="color:var(--ink)">The ladder</span>'+
     '<span>MINT · still sealed</span><span>NM · near perfect</span>'+
     '<span>VG+ · plays clean</span><span>GOOD · with noise</span>'+
     '<span>POOR · damaged → cut-out</span></div></div>';
 
-  // --- zoom state (rail | list), persisted ---
-  const savedZoom = localStorage.getItem('mizoZoom')==='list' ? 'list' : 'rail';
-  app.classList.add('zoom-'+savedZoom);
-  const zIc = document.getElementById('mzZoomIc'), zLbl = document.getElementById('mzZoomLbl');
-  function paintZoom(){
-    const listed = app.classList.contains('zoom-list');
-    if(zIc)  zIc.textContent  = listed ? '⟨' : '⟩';
-    if(zLbl) zLbl.textContent = listed ? 'icons' : 'names';
-  }
-  paintZoom();
-  document.getElementById('mzZoom').addEventListener('click', ()=>{
-    const listed = app.classList.toggle('zoom-list');
-    app.classList.toggle('zoom-rail', !listed);
-    localStorage.setItem('mizoZoom', listed ? 'list' : 'rail');
-    paintZoom();
-  });
+  // --- device nav wiring (with pixie) ---
+  dev.querySelectorAll('.dev-key').forEach(k=>k.addEventListener('click', ()=>{
+    const href=k.dataset.href; if(href) pixieNav(href);
+  }));
+  // collapse / expand the device
+  const collapse=dev.querySelector('#mzCollapse');
+  collapse.addEventListener('click', e=>{ e.stopPropagation(); dev.classList.add('min'); });
+  dev.querySelector('.dev-openhint').addEventListener('click', ()=>dev.classList.remove('min'));
+  dev.querySelector('.dev-screen').addEventListener('click', ()=>{ if(dev.classList.contains('min')) dev.classList.remove('min'); });
+
+  // --- portal sheet wiring ---
+  const portalBtn=dev.querySelector('#mzPortal');
+  portalBtn.addEventListener('click', e=>{ e.stopPropagation(); psheet.classList.toggle('on'); });
+  psheet.querySelectorAll('.portal-dest').forEach(d=>d.addEventListener('click', ()=>{
+    psheet.classList.remove('on'); pixieNav('storefront.html?c='+d.dataset.slug);
+  }));
+  document.addEventListener('click', e=>{ if(!psheet.contains(e.target) && !portalBtn.contains(e.target)) psheet.classList.remove('on'); });
 
   // --- wallet drawer wiring ---
-  function openWallet(tab){ scrim.classList.add('on'); drawer.classList.add('on'); if(tab) setTab(tab); }
+  function openWallet(tab){ scrim.classList.add('on'); drawer.classList.add('on'); if(tab && !walletOff) setTab(tab); }
   function closeWallet(){ scrim.classList.remove('on'); drawer.classList.remove('on'); }
   function setTab(tab){
     drawer.querySelectorAll('#mzTabs b').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
     const swap = tab==='swap';
-    document.getElementById('mzLegA').textContent = swap?'you pay':'move in';
-    document.getElementById('mzLegB').textContent = swap?'you receive':'arrives on';
-    document.getElementById('mzLegMid').textContent = swap?'⇅':'⇄';
-    document.getElementById('mzRoute').textContent = swap?'ETH → intent solver → TON · 1 hop':'EthX → TonX · one signature · ~40s';
+    const A=document.getElementById('mzLegA'), B=document.getElementById('mzLegB'), M=document.getElementById('mzLegMid'), R=document.getElementById('mzRoute');
+    if(A) A.textContent = swap?'you pay':'move in';
+    if(B) B.textContent = swap?'you receive':'arrives on';
+    if(M) M.textContent = swap?'⇅':'⇄';
+    if(R) R.textContent = swap?'ETH → intent solver → TON · 1 hop':'EthX → TonX · one signature · ~40s';
   }
-  document.getElementById('mzWallet').addEventListener('click', ()=>openWallet());
-  document.getElementById('mzSwap').addEventListener('click', ()=>openWallet('swap'));
+  wobj.addEventListener('click', ()=>openWallet());
   document.getElementById('mzDrawerX').addEventListener('click', closeWallet);
   scrim.addEventListener('click', closeWallet);
   drawer.querySelectorAll('#mzTabs b').forEach(b=>b.addEventListener('click', ()=>setTab(b.dataset.tab)));
+  window.mzOpenWallet = openWallet;  // let pages trigger it (e.g. verbs)
+
+  // --- boot / page-in animation ---
+  setTimeout(()=>dev.classList.remove('boot'), 800);
+  if(sessionStorage.getItem('mizoNav')){ stage.classList.add('enter-in'); sessionStorage.removeItem('mizoNav'); }
+
+  // --- intercept internal links for seamless pixie transitions ---
+  document.addEventListener('click', e=>{
+    const a=e.target.closest('a'); if(!a) return;
+    const href=a.getAttribute('href')||'';
+    if(a.target==='_blank' || href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto')) return;
+    if(!/\.html(\?|$)/.test(href)) return;
+    e.preventDefault(); pixieNav(href);
+  });
 }
 
 /* ---------- small interactions ---------- */

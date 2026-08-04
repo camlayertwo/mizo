@@ -24,18 +24,11 @@
       <span class="mono-sm muted">▽ scroll to enter ▽</span>
     </div>
 
-    <!-- the sheet on the table: the verbs, max zoom-out -->
-    <div class="wsheet">
-      <span class="wsheet-corner tl"></span><span class="wsheet-corner tr"></span>
-      <span class="wsheet-corner bl"></span><span class="wsheet-corner br"></span>
-      <span class="wsheet-head">what do you want to do</span>
-      <div class="wverbs">
-        <a class="wverb" href="launch.html"><span class="v">Launch</span><span class="k">deploy a record · &lt;60s</span></a>
-        <button class="wverb" data-verb="swap"><span class="v">Swap</span><span class="k">any chain → any chain</span></button>
-        <button class="wverb" data-verb="bridge"><span class="v">Bridge</span><span class="k">move assets in</span></button>
-        <a class="wverb" href="#wall"><span class="v">Explore</span><span class="k">flip the bins</span></a>
-      </div>
-      <span class="wsheet-foot">or step into a store ↓</span>
+    <!-- the hero on the table: what Mizo is, max zoom-out. the verbs live on the device (bottom-left). -->
+    <div class="whero">
+      <h1 class="display whero-h">Swap, bridge, and launch<br>across every chain.</h1>
+      <p class="whero-p">One hub for every store. Step into a chain to browse its wall, or trade across all of them without leaving. Every launch is a record.</p>
+      <span class="whero-foot">step into a store ↓ &nbsp;·&nbsp; or drive the device, bottom-left</span>
     </div>
 
     <!-- chains as floating stores, laid out like a map -->
@@ -66,22 +59,13 @@
     <span class="tab">External · DexScreener</span>
   </div>
 
-  <div class="grid g6" id="wall"></div>
+  <div class="shelf-tag"><b>The Wall</b> — cleared the standard · <span class="cap">12 slots · ranked</span></div>
+  <div class="crate" id="wall"></div>
 
-  <div class="note" style="margin-top:20px">
+  <div class="note" style="margin-top:26px">
     <b>Mizo-launched + graduations are the primary section.</b> DexScreener-sourced trending renders in a separate, clearly-labelled band — never mixed. If the external feed fails, own-launchpad data still renders.
   </div>
 
-  <hr class="rule"/>
-
-  <!-- ===== DISCOVER INTENT CARDS ===== -->
-  <div class="sec"><span class="no">§11.1 H11</span><h2>What do you want to do</h2><span class="jp">用</span></div>
-  <div class="grid g4">
-    <a class="panel pad" href="launch.html"><span class="kicker">act</span><h3 class="display" style="font-size:26px;margin:8px 0">Launch</h3><p class="mono-sm muted">Deploy in under 60s. Chain picker first.</p></a>
-    <a class="panel pad" href="private.html"><span class="kicker">act</span><h3 class="display" style="font-size:26px;margin:8px 0">Private swap</h3><p class="mono-sm muted">Gasless, MEV-protected. The back room.</p></a>
-    <a class="panel pad" href="#" data-verb="bridge"><span class="kicker">act</span><h3 class="display" style="font-size:26px;margin:8px 0">Bridge</h3><p class="mono-sm muted">The import counter. Move assets in.</p></a>
-    <a class="panel pad" href="collection.html"><span class="kicker">act</span><h3 class="display" style="font-size:26px;margin:8px 0">Collection</h3><p class="mono-sm muted">Twelve slots, every chain. Mizo's standards.</p></a>
-  </div>
 
 </main>
 
@@ -97,16 +81,13 @@
   const WSIGN = { hood:'林', sol:'太', base:'基', bnb:'幣', ton:'頓', eth:'乙' };
 
   function openDrawer(tab){
+    if(window.mzOpenWallet){ window.mzOpenWallet(tab); return; }
     const w = document.getElementById('mzWallet'); if(w) w.click();
-    if(tab){ const b = document.querySelector('#mzTabs b[data-tab="'+tab+'"]'); if(b) b.click(); }
   }
   function enterStore(slug){
-    const c = (typeof CHAINS!=='undefined' && CHAINS.find(x=>x.slug===slug)) || {};
-    const ov = document.createElement('div'); ov.className = 'doorzoom';
-    ov.innerHTML = '<div class="door">'+(WSIGN[slug]||c.kanji||'溝')+'</div>';
-    document.body.appendChild(ov);
-    requestAnimationFrame(()=>ov.classList.add('on'));
-    setTimeout(()=>{ location.href = 'storefront.html?c='+slug; }, 520);
+    // portal in via the shared pixie dissolve (no literal door — digital, subtle)
+    if(window.pixieNav){ window.pixieNav('storefront.html?c='+slug); return; }
+    location.href = 'storefront.html?c='+slug;
   }
   function renderWorld(){
     const map = document.getElementById('wmap'); if(!map) return;
@@ -116,29 +97,16 @@
         + '<span class="ws-float">'
         +   '<span class="ws-ico">'+icon(c.slug)+'</span>'
         +   '<span class="ws-sign">'+(WSIGN[c.slug]||c.kanji)+'<small>'+c.name+' · open</small></span>'
-        +   '<span class="ws-acts">'
-        +     '<span class="wa enter">enter →</span>'
-        +     '<span class="wa" data-a="swap">swap</span>'
-        +     '<span class="wa" data-a="bridge">bridge</span>'
-        +   '</span>'
+        +   '<span class="ws-acts"><span class="wa enter">enter →</span></span>'
         + '</span></button>';
     }).join('');
     map.querySelectorAll('.wstore').forEach(st=>{
-      st.addEventListener('click', e=>{
-        const a = e.target.closest('.wa');
-        if(a && a.dataset.a){ e.stopPropagation(); openDrawer(a.dataset.a); return; }
-        enterStore(st.dataset.slug);
-      });
+      st.addEventListener('click', ()=> enterStore(st.dataset.slug));
     });
   }
 
   renderWorld();
   renderGrid('#wall', TOKENS, 'bin');
-
-  /* sheet verbs + bridge intent card open the wallet drawer on the right tab */
-  document.querySelectorAll('[data-verb]').forEach(b=>b.addEventListener('click', e=>{
-    e.preventDefault(); openDrawer(b.dataset.verb);
-  }));
 </script>
 </body>
 </html>

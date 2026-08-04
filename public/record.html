@@ -19,6 +19,15 @@
     <a class="mono-sm muted" href="storefront.html?c=hood">← back to the store</a>
   </div>
 
+  <div class="statebar">
+    <span class="sl">record state</span>
+    <button class="sb" data-state="pregrad">pre-graduation</button>
+    <button class="sb" data-state="graduated">graduated</button>
+    <button class="sb" data-state="ungraded">ungraded · first 15m</button>
+    <button class="sb" data-state="cutout">cut-out</button>
+    <button class="sb" data-state="external">external token</button>
+  </div>
+
   <div class="rd">
 
     <!-- LEFT: the record (cover + obi + state) -->
@@ -40,7 +49,7 @@
       <div class="grade" style="justify-self:start">
         <span class="g" id="gBadge">MINT</span>
         <span class="txt">graded <b id="gAge">4m</b> ago
-          <small>LP burned · mint authority revoked · no sell tax</small>
+          <small id="gDesc">LP burned · mint authority revoked · no sell tax</small>
         </span>
       </div>
       <a class="mono-sm muted" href="#" style="text-decoration:underline">→ read the published grading rubric (§6)</a>
@@ -60,12 +69,12 @@
 
       <div class="chartbox"></div>
 
-      <div class="panel pad">
+      <div class="panel pad" id="curvePanel">
         <div class="between" style="margin-bottom:8px">
-          <span class="kicker">bonding curve · making it onto the wall</span>
-          <span class="mono-sm">66% → graduation</span>
+          <span class="kicker" id="curveLbl">bonding curve · making it onto the wall</span>
+          <span class="mono-sm" id="curvePct">66% → graduation</span>
         </div>
-        <div class="progress"><i></i></div>
+        <div class="progress"><i id="curveBar"></i></div>
       </div>
 
       <div class="grid g2">
@@ -80,7 +89,7 @@
             <span class="k">contract</span><span class="muted">7xKp…9fQ2 ⧉</span>
           </div>
         </div>
-        <div class="buywidget">
+        <div class="buywidget" id="buyWidget">
           <div class="hd"><span class="kicker" style="align-self:center">buy · trade-in at the till</span><span class="mono-sm muted">4 taps to signed</span></div>
           <div class="presets">
             <span class="p">0.01</span><span class="p on">0.1</span><span class="p">0.5</span><span class="p">custom</span>
@@ -124,6 +133,48 @@
   const pill = document.getElementById('stPill');
   pill.textContent = state==='SEALED'?'STILL SEALED':(state==='CUT-OUT'?'CUT-OUT':'OPENED');
   pill.className = 'state ' + (state==='SEALED'?'sealed':(state==='CUT-OUT'?'cut':''));
+
+  /* ---- record state switcher: pre-grad / graduated / ungraded / cut-out / external ---- */
+  const $=id=>document.getElementById(id);
+  const buyConnect = '<div class="hd"><span class="kicker" style="align-self:center">buy · trade-in at the till</span><span class="mono-sm muted">4 taps to signed</span></div>'+
+    '<div class="presets"><span class="p">0.01</span><span class="p on">0.1</span><span class="p">0.5</span><span class="p">custom</span></div>'+
+    '<div style="padding:14px"><div class="kv" style="margin-bottom:12px"><span class="k">you pay</span><span>0.1 SOL</span>'+
+    '<span class="k">you get</span><span>≈ 23,800 GROOVE</span><span class="k">grade now</span><span id="bwGrade">MINT · still sealed</span></div>'+
+    '<button class="btn block">Connect wallet to buy</button>'+
+    '<p class="mono-sm muted center" style="margin:10px 0 0">Browsing is free. A grade describes on-chain properties, not merit.</p></div>';
+  const RS={
+    pregrad(){ setGrade('MINT','MINT','still sealed','LP burned · mint authority revoked · no sell tax','sealed','STILL SEALED');
+      curve('bonding curve · making it onto the wall','66% → graduation','0 34% 0 0'); $('buyWidget').innerHTML=buyConnect; },
+    graduated(){ setGrade('NEAR MINT','NM','opened, near perfect','graduated · LP unlocked on schedule · trading live','','OPENED');
+      curve('graduated · now on the wall','100% · on the wall','0 0 0 0');
+      $('buyWidget').innerHTML=buyConnect.replace('Connect wallet to buy','Buy · 0.1 SOL').replace('MINT · still sealed','NEAR MINT · opened'); },
+    ungraded(){ setGrade('UNGRADED','—','awaiting grading','under 15 min old · not enough data yet','','SEALED');
+      $('stPill').textContent='UNGRADED'; $('stPill').className='state';
+      curve('too new to grade · live countdown','grading in 8m 20s','0 88% 0 0');
+      $('buyWidget').innerHTML=buyConnect.replace('MINT · still sealed','UNGRADED · countdown 8m'); $('gBadge').classList.add('ung'); },
+    cutout(){ setGrade('POOR','D','damaged','liquidity below floor · auto-demoted to the cut-out bin','cut','CUT-OUT');
+      curve('cut-out · kept visible, never delisted','off the wall','0 96% 0 0');
+      $('buyWidget').innerHTML='<div class="hd"><span class="kicker" style="align-self:center">cut-out record</span></div>'+
+        '<div style="padding:16px"><div class="banner warn" style="margin:0 0 12px"><span class="bi">!</span><div>This record was <b>cut</b>. It stays browsable and tradeable, but it is off the wall for a published reason.</div></div>'+
+        '<button class="btn block ghost">Trade anyway · at your own risk</button></div>'; },
+    external(){ setGrade('—','—','external token','not launched on Mizo · shown via market data','','EXTERNAL');
+      $('stPill').textContent='EXTERNAL'; $('stPill').className='state';
+      curve('external · no Mizo curve','market-data only','0 100% 0 0');
+      $('buyWidget').innerHTML='<div class="hd"><span class="kicker" style="align-self:center">external token</span></div>'+
+        '<div style="padding:16px"><div class="note" style="margin:0 0 12px">Visible but not buyable here. This token trades off-platform.</div>'+
+        '<button class="btn block">Open on DexScreener ↗</button></div>'; },
+  };
+  function setGrade(full,badge,word,desc,stCls,pillTxt){
+    $('obiGrade').textContent = full==='NEAR MINT'?'NM':full;
+    $('gBadge').textContent = badge; $('gBadge').classList.toggle('ung', badge==='—');
+    $('gDesc').textContent = desc;
+    const p=$('stPill'); p.textContent=pillTxt; p.className='state '+(stCls||'');
+  }
+  function curve(lbl,pct,inset){ $('curveLbl').textContent=lbl; $('curvePct').textContent=pct; $('curveBar').style.inset=inset; }
+  document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.statebar .sb').forEach(x=>x.classList.toggle('on',x===b)); RS[b.dataset.state]();
+  }));
+  document.querySelector('.statebar .sb[data-state="pregrad"]').classList.add('on');
 </script>
 </body>
 </html>

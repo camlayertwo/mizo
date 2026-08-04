@@ -495,29 +495,15 @@ hr.rule { border:0; border-top:1px solid var(--hair); margin: 38px 0; }
 .world-top .mono-sm{ animation:wbob 2.4s ease-in-out infinite; }
 @keyframes wbob{ 0%,100%{transform:translateY(0);opacity:.65} 50%{transform:translateY(3px);opacity:1} }
 
-/* the sheet on the table — the verbs, max zoom-out */
-.wsheet{
-  position:absolute; z-index:4; top:49%; left:50%;
-  transform:translate(-50%,-50%) rotate(-1.1deg);
-  width:min(438px,76%); background:var(--card);
-  border:1px solid var(--line); border-radius:6px; box-shadow:var(--soft); padding:22px 24px 16px;
+/* the hero in the world — what Mizo is, max zoom-out. verbs live on the device, not here. */
+.whero{
+  position:absolute; z-index:4; top:46%; left:50%;
+  transform:translate(-50%,-50%); text-align:center;
+  width:min(600px,84%); padding:0 20px; pointer-events:none;
 }
-.wsheet-head{ font-family:var(--sans); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--grey-2); }
-.wsheet-foot{ display:block; margin-top:12px; font-family:var(--mono); font-size:10.5px; color:var(--grey-1); text-align:center; }
-.wsheet-corner{ position:absolute; width:9px; height:9px; border:1px solid var(--grey-3); }
-.wsheet-corner.tl{ top:7px; left:7px; border-right:0; border-bottom:0; }
-.wsheet-corner.tr{ top:7px; right:7px; border-left:0; border-bottom:0; }
-.wsheet-corner.bl{ bottom:7px; left:7px; border-right:0; border-top:0; }
-.wsheet-corner.br{ bottom:7px; right:7px; border-left:0; border-top:0; }
-.wverbs{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
-.wverb{
-  text-align:left; border:1px solid var(--line); background:var(--paper); border-radius:var(--r-sm);
-  padding:11px 13px; cursor:pointer; display:flex; flex-direction:column; gap:2px;
-  transition:transform .15s, box-shadow .15s, background .15s; text-decoration:none;
-}
-.wverb:hover{ transform:translateY(-2px); box-shadow:var(--soft-sm); background:var(--card); }
-.wverb .v{ font-family:var(--sans); font-weight:700; font-size:19px; letter-spacing:-.02em; color:var(--ink); }
-.wverb .k{ font-family:var(--mono); font-size:9.5px; color:var(--grey-1); }
+.whero-h{ font-size:clamp(30px,4.7vw,52px); color:var(--ink); }
+.whero-p{ margin:16px auto 0; max-width:46ch; font-family:var(--sans); font-size:14px; line-height:1.55; color:var(--grey-1); }
+.whero-foot{ display:block; margin-top:20px; font-family:var(--mono); font-size:10.5px; letter-spacing:.03em; color:var(--grey-2); }
 
 /* floating stores map */
 .wmap{ position:absolute; inset:0; z-index:2; }
@@ -550,8 +536,255 @@ hr.rule { border:0; border-top:1px solid var(--hair); margin: 38px 0; }
 @media(max-width:900px){
   .world{ min-height:0; }
   .world-guide{ display:none; }
-  .wsheet{ position:relative; top:auto; left:auto; transform:rotate(-1deg); width:auto; margin:64px 16px 6px; }
+  .whero{ position:relative; top:auto; left:auto; transform:none; width:auto; margin:52px 16px 6px; padding:0; }
+  .whero-h{ font-size:30px; }
   .wmap{ position:relative; inset:auto; display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px 6px; padding:18px 12px 20px; margin-top:auto; }
   .wstore{ position:static !important; transform:none !important; animation:none; }
   .ws-acts{ opacity:1; transform:none; pointer-events:auto; }
+}
+
+/* ============================================================
+   v6 "LIVING WORLD" — the handheld device (nav), the separate
+   wallet object, portal/page transitions, entry boot animation,
+   and broken-out-of-the-grid layouts.
+   Device replaces the old topbar + sidebar entirely.
+   ============================================================ */
+
+/* neutralise the old shell: device model = full-bleed stage, no rails */
+body[data-page]{ padding-bottom:0; }
+.app{ display:block; min-height:100vh; }
+.app .side, .app .topbar{ display:none !important; }
+.stage{
+  margin:0 auto !important; padding:30px 30px 150px !important;
+  max-width:1220px; min-width:0;
+}
+.app.at-hub .stage{ max-width:100%; padding:0 0 150px !important; }
+.stage > .wrap{ max-width:1180px; margin:0 auto; padding:0 26px; }
+.stage > footer.ft{ margin-top:56px; }
+.stage > footer.ft .ft-in{ max-width:1180px; margin:0 auto; padding-left:26px; padding-right:26px; }
+
+/* ---------- THE DEVICE (persistent nav, bottom-left, held-in-hand) ---------- */
+.device{
+  position:fixed; left:24px; bottom:24px; z-index:80;
+  width:196px; background:var(--card);
+  border-radius:22px; box-shadow:0 18px 44px rgba(23,23,26,.22), 0 2px 0 rgba(23,23,26,.04);
+  padding:12px 12px 14px; user-select:none;
+  transform:translateY(0) rotate(-1deg);
+  transition:transform .28s cubic-bezier(.6,0,.25,1), width .24s ease, box-shadow .24s;
+}
+.device::before{ /* speaker / grip detail top */
+  content:""; position:absolute; top:7px; left:50%; transform:translateX(-50%);
+  width:34px; height:4px; border-radius:99px; background:var(--line);
+}
+.device:hover{ transform:translateY(-2px) rotate(-1deg); box-shadow:0 24px 56px rgba(23,23,26,.26); }
+
+/* the screen */
+.dev-screen{
+  margin-top:9px; border-radius:12px; background:var(--paper-3);
+  box-shadow:inset 0 0 0 1px var(--line), inset 0 2px 8px rgba(23,23,26,.06);
+  padding:10px 12px; overflow:hidden; position:relative;
+}
+.dev-screen::after{ /* scanline sheen */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background:repeating-linear-gradient(0deg, rgba(23,23,26,.05) 0 1px, transparent 1px 3px);
+}
+.dev-loc{ font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.04em; color:var(--ink);
+  text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dev-read{ font-family:var(--mono); font-size:8.5px; letter-spacing:.02em; color:var(--grey-1); margin-top:3px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dev-read .blink{ animation:devblink 1.15s steps(1) infinite; }
+@keyframes devblink{ 50%{ opacity:.15; } }
+
+/* key grid (the app buttons) */
+.dev-keys{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:11px;
+}
+.dev-key{
+  border:0; background:var(--paper-2); border-radius:10px; cursor:pointer;
+  padding:9px 0 7px; display:flex; flex-direction:column; align-items:center; gap:4px;
+  color:var(--grey-1); transition:background .14s, transform .1s, color .14s; position:relative;
+}
+.dev-key:hover{ background:var(--paper-3); color:var(--ink); }
+.dev-key:active{ transform:translateY(1px) scale(.97); }
+.dev-key.on{ background:var(--ink); color:var(--paper); }
+.dev-key .gl{ font-size:15px; line-height:1; }
+.dev-key .lb{ font-size:8px; letter-spacing:.06em; text-transform:uppercase; }
+
+/* portal dial row */
+.dev-portal{
+  margin-top:8px; display:flex; align-items:center; gap:8px;
+  border-top:1px solid var(--hair); padding-top:9px;
+}
+.dev-portal .pbtn{
+  flex:1; border:0; cursor:pointer; border-radius:10px; background:var(--paper-2);
+  padding:8px 10px; display:flex; align-items:center; gap:8px; color:var(--ink-2);
+  font-family:var(--mono); font-size:10px; letter-spacing:.04em; transition:background .14s;
+}
+.dev-portal .pbtn:hover{ background:var(--paper-3); }
+.dev-portal .pdial{
+  width:20px; height:20px; border-radius:50%; flex:none;
+  box-shadow:inset 0 0 0 2px var(--grey-2); position:relative;
+  background:conic-gradient(var(--ink) 0 25%, transparent 0 100%);
+  animation:pspin 6s linear infinite;
+}
+@keyframes pspin{ to{ transform:rotate(360deg); } }
+.dev-collapse{
+  border:0; background:none; cursor:pointer; color:var(--grey-2); font-size:12px;
+  width:26px; height:26px; border-radius:8px; flex:none;
+}
+.dev-collapse:hover{ background:var(--paper-2); color:var(--ink); }
+
+/* collapsed = a small nub you can flick back open */
+.device.min{ width:64px; padding:10px; }
+.device.min .dev-loc{ font-size:9px; }
+.device.min .dev-read, .device.min .dev-keys, .device.min .dev-portal{ display:none; }
+.device.min .dev-screen{ padding:8px; text-align:center; }
+.device.min::after{ }
+.device .dev-openhint{ display:none; }
+.device.min .dev-openhint{
+  display:block; margin-top:8px; text-align:center; font-size:14px; color:var(--grey-1);
+  cursor:pointer;
+}
+
+/* portal picker sheet (rises above the device) */
+.portal-sheet{
+  position:fixed; left:24px; bottom:250px; z-index:81; width:240px;
+  background:var(--card); border-radius:18px; box-shadow:0 22px 54px rgba(23,23,26,.26);
+  padding:14px; opacity:0; transform:translateY(14px) scale(.96); pointer-events:none;
+  transform-origin:bottom left; transition:opacity .2s ease, transform .2s cubic-bezier(.5,0,.2,1);
+}
+.portal-sheet.on{ opacity:1; transform:none; pointer-events:auto; }
+.portal-sheet h4{ font-size:10px; text-transform:uppercase; letter-spacing:.16em; color:var(--grey-2); margin-bottom:10px; font-weight:600; }
+.portal-list{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.portal-dest{
+  border:0; cursor:pointer; background:var(--paper-2); border-radius:12px; padding:12px 8px;
+  display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--ink-2);
+  transition:background .14s, transform .12s;
+}
+.portal-dest:hover{ background:var(--paper-3); transform:translateY(-2px); }
+.portal-dest.here{ box-shadow:inset 0 0 0 1.5px var(--ink); background:var(--card); }
+.portal-dest .cico{ width:22px; height:22px; color:var(--ink); }
+.portal-dest .pn{ font-size:10px; font-family:var(--mono); letter-spacing:.02em; }
+.portal-dest .ps{ font-size:8px; text-transform:uppercase; letter-spacing:.1em; color:var(--grey-2); }
+
+/* ---------- THE WALLET (separate object, top-right, distinct form) ---------- */
+.wallet-obj{
+  position:fixed; top:20px; right:22px; z-index:80;
+  display:flex; align-items:center; gap:11px; cursor:pointer;
+  background:var(--ink); color:var(--paper); border:0;
+  padding:9px 14px 9px 11px; border-radius:16px;
+  box-shadow:0 10px 30px rgba(23,23,26,.24);
+  font-family:var(--sans); transition:transform .16s, box-shadow .16s;
+}
+.wallet-obj:hover{ transform:translateY(-2px); box-shadow:0 16px 38px rgba(23,23,26,.3); }
+.wallet-obj .wchip{ width:26px; height:26px; border-radius:8px; background:var(--paper); flex:none;
+  display:grid; place-items:center; color:var(--ink); font-family:var(--jp); font-size:14px; }
+.wallet-obj .wtxt{ display:flex; flex-direction:column; line-height:1.15; }
+.wallet-obj .wtxt .wa{ font-family:var(--mono); font-weight:700; font-size:13px; letter-spacing:-.01em; }
+.wallet-obj .wtxt .wl{ font-size:8px; text-transform:uppercase; letter-spacing:.14em; opacity:.65; }
+.wallet-obj.off{ background:var(--card); color:var(--ink); box-shadow:0 10px 30px rgba(23,23,26,.14); }
+.wallet-obj.off .wchip{ background:var(--paper-3); }
+.wallet-obj .car{ opacity:.6; font-size:11px; }
+
+/* brand lockup floats top-left, out of the way, links home */
+.brand-float{
+  position:fixed; top:22px; left:26px; z-index:70; display:flex; align-items:center; gap:8px; cursor:pointer;
+}
+.brand-float img{ height:22px; }
+.brand-float .mk{ font-family:var(--sans); font-weight:800; font-size:22px; letter-spacing:-.03em; }
+.brand-float .kj{ font-family:var(--jp); font-size:13px; color:var(--grey-1); }
+.brand-float small{ font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--grey-2); }
+.app.at-hub .brand-float{ } /* keep visible on hub too */
+
+/* ---------- PORTAL / PAGE TRANSITION (digital "pixie" dissolve) ---------- */
+.pixie{
+  position:fixed; inset:0; z-index:200; pointer-events:none; opacity:0;
+  background:var(--paper);
+  transition:opacity .34s ease;
+}
+.pixie.show{ opacity:1; }
+.pixie::before{ /* fine dither that sweeps */
+  content:""; position:absolute; inset:0;
+  background-image:radial-gradient(var(--grey-2) 32%, transparent 34%);
+  background-size:5px 5px; opacity:0;
+  -webkit-mask-image:linear-gradient(115deg, #000 0 20%, transparent 42%);
+          mask-image:linear-gradient(115deg, #000 0 20%, transparent 42%);
+  -webkit-mask-size:300% 100%; mask-size:300% 100%;
+}
+.pixie.show::before{ opacity:.55; animation:pixiesweep .5s ease forwards; }
+@keyframes pixiesweep{ from{ -webkit-mask-position:120% 0; mask-position:120% 0; } to{ -webkit-mask-position:-60% 0; mask-position:-60% 0; } }
+.pixie .spark{ position:absolute; width:3px; height:3px; border-radius:50%; background:var(--ink); opacity:0; }
+.pixie.show .spark{ animation:sparkrise .55s ease forwards; }
+@keyframes sparkrise{ 0%{ opacity:0; transform:translateY(10px) scale(.4);} 30%{opacity:.9;} 100%{ opacity:0; transform:translateY(-26px) scale(1);} }
+
+/* page arriving: content lifts in once (set by JS on <main.stage>) */
+.stage.enter-in{ animation:stagein .5s cubic-bezier(.4,0,.2,1) both; }
+@keyframes stagein{ from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:none; } }
+
+/* entry boot: device powers on */
+.device.boot .dev-screen{ animation:screenboot .7s ease both; }
+@keyframes screenboot{ 0%{ filter:brightness(2.2); opacity:0;} 18%{opacity:1;} 30%{filter:brightness(.6);} 46%{filter:brightness(1.4);} 100%{filter:none; opacity:1;} }
+.device.boot{ animation:devrise .5s cubic-bezier(.3,1.1,.4,1) both; }
+@keyframes devrise{ from{ transform:translateY(40px) rotate(-1deg); opacity:0;} to{ transform:translateY(0) rotate(-1deg); opacity:1;} }
+
+/* ---------- BREAK-THE-GRID helpers (records scattered like a crate) ---------- */
+.crate{ position:relative; display:flex; flex-wrap:wrap; gap:22px 20px; align-items:flex-start; }
+.crate > *{ flex:0 0 auto; width:172px; }
+.crate > *:nth-child(3n+1){ transform:rotate(-1.4deg) translateY(6px); }
+.crate > *:nth-child(3n+2){ transform:rotate(.8deg); }
+.crate > *:nth-child(4n+3){ transform:rotate(-.6deg) translateY(-5px); }
+.crate > *:nth-child(5n)  { transform:rotate(1.6deg) translateY(3px); }
+.crate > *{ transition:transform .18s ease, box-shadow .18s ease; }
+.crate > *:hover{ transform:rotate(0) translateY(-4px) scale(1.03); z-index:2; }
+
+/* a "shelf" caption tag that sits over the crate */
+.shelf-tag{ position:relative; display:inline-flex; align-items:center; gap:9px; margin:0 0 14px;
+  font-family:var(--mono); font-size:11px; color:var(--grey-1); letter-spacing:.04em; }
+.shelf-tag b{ color:var(--ink); font-weight:700; text-transform:uppercase; letter-spacing:.1em; }
+.shelf-tag .cap{ font-size:9px; background:var(--paper-2); border-radius:99px; padding:3px 9px; color:var(--grey-1); }
+
+/* ---------- generic state chrome (empty / loading / error / states switcher) ---------- */
+.statebar{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin:0 0 20px;
+  background:var(--paper-2); border-radius:14px; padding:8px 10px; }
+.statebar .sl{ font-size:9px; text-transform:uppercase; letter-spacing:.14em; color:var(--grey-2); margin-right:4px; }
+.statebar .sb{ border:0; cursor:pointer; background:var(--card); color:var(--grey-1); font-family:var(--mono);
+  font-size:10.5px; padding:6px 11px; border-radius:99px; box-shadow:var(--soft-sm); transition:.14s; }
+.statebar .sb:hover{ color:var(--ink); }
+.statebar .sb.on{ background:var(--ink); color:var(--paper); }
+
+.empty{ border-radius:var(--r); background:var(--paper-2); padding:48px 24px; text-align:center;
+  color:var(--grey-1); display:flex; flex-direction:column; align-items:center; gap:10px; }
+.empty .em-ico{ font-family:var(--jp); font-size:42px; color:var(--grey-3); }
+.empty h3{ font-size:16px; color:var(--ink-2); font-weight:600; }
+.empty p{ font-size:12px; max-width:36ch; }
+
+.skel{ border-radius:var(--r); background:linear-gradient(100deg, var(--paper-2) 30%, var(--paper-3) 50%, var(--paper-2) 70%);
+  background-size:220% 100%; animation:shimmer 1.3s linear infinite; }
+@keyframes shimmer{ to{ background-position:-220% 0; } }
+.skel-card{ aspect-ratio:.76; }
+
+.banner{ display:flex; align-items:center; gap:12px; border-radius:var(--r); padding:13px 16px; font-size:12px;
+  background:var(--paper-2); color:var(--ink-2); box-shadow:var(--soft-sm); margin-bottom:18px; }
+.banner .bi{ width:30px; height:30px; border-radius:8px; display:grid; place-items:center; flex:none;
+  background:var(--ink); color:var(--paper); font-size:14px; }
+.banner.warn .bi{ background:var(--card); color:var(--ink); box-shadow:inset 0 0 0 1.5px var(--ink); }
+.banner b{ color:var(--ink); }
+.banner .ba{ margin-left:auto; }
+
+/* transaction toast/states */
+.txcard{ border-radius:var(--r); background:var(--card); box-shadow:var(--soft); padding:22px; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:12px; max-width:360px; margin:20px auto; }
+.txcard .spin{ width:36px; height:36px; border-radius:50%; box-shadow:inset 0 0 0 3px var(--paper-3);
+  border-top:3px solid var(--ink); animation:pspin 1s linear infinite; }
+.txcard .done{ width:40px; height:40px; border-radius:50%; background:var(--ink); color:var(--paper);
+  display:grid; place-items:center; font-size:20px; }
+.txcard .fail{ width:40px; height:40px; border-radius:50%; box-shadow:inset 0 0 0 2px var(--ink); color:var(--ink);
+  display:grid; place-items:center; font-size:20px; }
+
+@media (max-width:760px){
+  .device{ left:12px; bottom:12px; width:176px; }
+  .portal-sheet{ left:12px; bottom:236px; }
+  .wallet-obj{ top:12px; right:12px; }
+  .brand-float{ top:14px; left:14px; }
+  .crate > *{ width:44%; }
 }

@@ -63,18 +63,31 @@
       <!-- STEP 3 -->
       <div class="stepview" data-view="3">
         <div class="sec"><span class="no">03</span><h2>Cut &amp; confirm</h2><span class="jp">刻</span></div>
-        <div class="panel pad" style="margin-bottom:14px">
-          <div class="kv">
-            <span class="k">store</span><span id="sumChain">HoodX</span>
-            <span class="k">curve</span><span>bonding · graduates at $XXk mcap</span>
-            <span class="k">launch cost</span><span>≈ 0.02 SOL network + 0 platform</span>
-            <span class="k">opening grade</span><span>UNGRADED → re-graded within 15 min</span>
-            <span class="k">initial state</span><span>SEALED · obi intact</span>
-          </div>
+
+        <div class="statebar">
+          <span class="sl">flow</span>
+          <button class="sb on" data-state="confirm">confirm</button>
+          <button class="sb" data-state="signing">signing</button>
+          <button class="sb" data-state="pending">pending</button>
+          <button class="sb" data-state="success">success</button>
+          <button class="sb" data-state="failure">failure</button>
         </div>
-        <button class="btn block" style="margin-bottom:8px">Sign &amp; press the record</button>
-        <div class="bar"><button class="btn ghost" data-goto="2">← back</button><span class="mono-sm muted">wallet will prompt to sign</span></div>
-        <div class="note" style="margin-top:16px"><b>Success screen</b> generates a share card carrying the obi band — the launcher's first post. State language: <i>still sealed</i>.</div>
+
+        <div id="launchConfirm">
+          <div class="panel pad" style="margin-bottom:14px">
+            <div class="kv">
+              <span class="k">store</span><span id="sumChain">HoodX</span>
+              <span class="k">curve</span><span>bonding · graduates at $XXk mcap</span>
+              <span class="k">launch cost</span><span>≈ 0.02 SOL network + 0 platform</span>
+              <span class="k">opening grade</span><span>UNGRADED → re-graded within 15 min</span>
+              <span class="k">initial state</span><span>SEALED · obi intact</span>
+            </div>
+          </div>
+          <button class="btn block" style="margin-bottom:8px" id="signBtn">Sign &amp; press the record</button>
+          <div class="bar"><button class="btn ghost" data-goto="2">← back</button><span class="mono-sm muted">wallet will prompt to sign · one screen, no interstitial</span></div>
+        </div>
+
+        <div id="launchResult" style="display:none"></div>
       </div>
     </div>
 
@@ -117,6 +130,25 @@
     const nm = sw.dataset.name;
     ['pvChain','pvChain2','sumChain'].forEach(id=>document.getElementById(id).textContent=nm);
   }));
+
+  /* ---- launch flow states ---- */
+  const confirm=document.getElementById('launchConfirm'), result=document.getElementById('launchResult');
+  const LS={
+    confirm(){ confirm.style.display=''; result.style.display='none'; result.innerHTML=''; },
+    signing(){ show('<div class="txcard"><div class="spin"></div><b>Waiting for signature</b><span class="mono-sm muted">approve in your wallet · one screen, no interstitial</span></div>'); },
+    pending(){ show('<div class="txcard"><div class="spin"></div><b>Pressing the record…</b><span class="mono-sm muted">tx broadcast · deploying curve · ~6s</span><div class="progress" style="width:100%;margin-top:4px"><i style="inset:0 30% 0 0"></i></div></div>'); },
+    success(){ show('<div class="txcard"><div class="done">✓</div><b>$GROOVE is live on HoodX</b><span class="mono-sm muted">sealed · ungraded · re-graded within 15 min</span>'+
+      '<div class="obi-card wall" style="width:150px;margin:6px auto"><div class="obi"><div class="grade-b">—</div><div class="v">HoodX</div><div class="dot"></div></div>'+
+      '<div class="obi-body"><div class="cover d2"><div class="glyph">溝</div></div><div class="obi-meta"><div class="row"><span class="tkr">$GROOVE</span><span class="mono-sm muted">0m</span></div><div class="row"><span class="k">state</span><span class="mono-sm">still sealed</span></div></div></div></div>'+
+      '<div class="bar" style="justify-content:center"><button class="btn">Share card ↗</button><a class="btn ghost" href="record.html?t=GROOVE&c=hood">View record →</a></div></div>'); },
+    failure(){ show('<div class="txcard"><div class="fail">!</div><b>Press failed</b><span class="mono-sm muted">signature rejected or network dropped · nothing was spent</span><button class="btn" id="retry">Try again</button></div>'); },
+  };
+  function show(html){ confirm.style.display='none'; result.style.display=''; result.innerHTML=html;
+    const r=document.getElementById('retry'); if(r) r.addEventListener('click',()=>setState('confirm')); }
+  function setState(n){ LS[n](); document.querySelectorAll('.statebar .sb').forEach(b=>b.classList.toggle('on',b.dataset.state===n)); }
+  document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>setState(b.dataset.state)));
+  document.getElementById('signBtn').addEventListener('click',()=>{ setState('signing');
+    setTimeout(()=>setState('pending'),900); setTimeout(()=>setState('success'),2100); });
 </script>
 </body>
 </html>

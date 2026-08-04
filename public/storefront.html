@@ -39,10 +39,18 @@
     </div>
   </section>
 
-  <div class="between" style="margin:18px 0 22px">
+  <div class="between" style="margin:18px 0 16px">
     <span class="kicker">jump stores · you never leave the hub</span>
     <div class="bar" id="chainRow"></div>
   </div>
+
+  <div class="statebar">
+    <span class="sl">store state</span>
+    <button class="sb on" data-state="live">live</button>
+    <button class="sb" data-state="thin">newly added · thin</button>
+    <button class="sb" data-state="wrongchain">wrong wallet chain</button>
+  </div>
+  <div id="storeBanner"></div>
 
   <!-- THE WALL (12, ranked) -->
   <div class="wall-head">
@@ -61,7 +69,7 @@
   <div class="bar" data-tabs style="margin-bottom:18px">
     <span class="tab on">New</span><span class="tab">Movers</span><span class="tab">Ungraded</span><span class="tab">Sealed</span>
     <span class="sep"></span>
-    <a class="tab" href="storefront-cutout.html" onclick="return false" style="cursor:default">Cut-out bin →</a>
+    <a class="tab" href="storefront-cutout.html">Cut-out bin →</a>
   </div>
   <div class="grid g6" id="theBin"></div>
 
@@ -85,6 +93,21 @@
   const pool = chainTokens.length ? chainTokens : TOKENS; // fallback for thin stores
   renderGrid('#theWall', pool.concat(TOKENS).slice(0,8), 'wall');
   renderGrid('#theBin', TOKENS, 'bin');
+
+  /* ---- store states ---- */
+  const banner=document.getElementById('storeBanner');
+  const wall=document.getElementById('theWall'), bin=document.getElementById('theBin');
+  const SS={
+    live(){ banner.innerHTML=''; renderGrid('#theWall', pool.concat(TOKENS).slice(0,8), 'wall'); renderGrid('#theBin', TOKENS, 'bin'); },
+    thin(){ banner.innerHTML='<div class="banner"><span class="bi">新</span><div><b>This store just opened.</b> First records land soon — the wall fills as tokens graduate. Same template, zero design hours.</div></div>';
+      wall.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="em-ico">初</div><h3>Wall is empty</h3><p>No records have cleared the standard here yet.</p></div>';
+      bin.innerHTML=Array.from({length:6}).map(()=>'<div class="skel skel-card"></div>').join('')+TOKENS.slice(0,2).map(t=>obiCard(t,'bin')).join(''); },
+    wrongchain(){ banner.innerHTML='<div class="banner warn"><span class="bi">!</span><div>Your wallet is on <b>EthX</b>, this store is <b>'+info.name+'</b>. <a href="#" onclick="return false">Switch network</a> to buy here — browsing works either way.</div></div>';
+      renderGrid('#theWall', pool.concat(TOKENS).slice(0,8), 'wall'); renderGrid('#theBin', TOKENS, 'bin'); }
+  };
+  document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.statebar .sb').forEach(x=>x.classList.toggle('on',x===b)); SS[b.dataset.state]();
+  }));
 </script>
 </body>
 </html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mizo — Swap · wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="stylesheet" href="mizo.css"/>
+</head>
+<body data-page="swap">
+<header class="nav"></header>
+
+<main class="wrap">
+
+  <div class="sec"><span class="no">§9 · §10</span><h2>Swap · any chain to any chain, one signature</h2><span class="jp">両</span></div>
+
+  <div class="statebar">
+    <span class="sl">state</span>
+    <button class="sb" data-state="quote">quote ready</button>
+    <button class="sb" data-state="loading">quote loading</button>
+    <button class="sb" data-state="insufficient">insufficient balance</button>
+    <button class="sb" data-state="unavailable">route unavailable</button>
+  </div>
+
+  <div class="grid g2" style="align-items:start; gap:26px; grid-template-columns:minmax(0,420px) 1fr">
+    <div class="stack">
+      <div class="swapleg"><div class="top"><span>you pay</span><span>balance 4.20 ETH · EthX</span></div>
+        <div class="between"><span class="amt">1.00</span><span class="chain-sw on" style="cursor:pointer"><span class="cico" style="color:var(--paper)"></span><span class="nm">ETH · EthX ▾</span></span></div></div>
+      <div class="leg-mid">⇅</div>
+      <div class="swapleg"><div class="top"><span>you receive</span><span id="rcvSub">≈ 182.4 TON · TonX</span></div>
+        <div class="between"><span class="amt" id="rcvAmt">182.4</span><span class="chain-sw" style="cursor:pointer"><span class="nm">TON · TonX ▾</span></span></div></div>
+
+      <div class="route">
+        <div class="rr"><span>route</span><b id="swRoute">ETH → intent solver → TON · 1 hop</b></div>
+        <div class="rr"><span>rate</span><b>1 ETH ≈ 182.4 TON</b></div>
+        <div class="rr"><span>slippage</span><b>auto · 0.5%</b></div>
+        <div class="rr"><span>gas</span><b>gasless · paid from output</b></div>
+      </div>
+
+      <div id="swCta"><button class="btn-primary block">Review &amp; sign</button></div>
+    </div>
+
+    <div class="stack">
+      <div class="note"><b>Why one signature.</b> Cross-chain swap is intent-based: you sign what you want, a solver finds the route and covers gas from the output. No manual bridge, no second screen, no judging which bridge is real.</div>
+      <div class="panel pad">
+        <span class="kicker">also available</span>
+        <div class="grid g2" style="margin-top:12px; gap:10px">
+          <a class="panel pad" href="bridge.html" style="padding:14px"><b>Bridge →</b><p class="mono-sm muted" style="margin:6px 0 0">Move an asset across, keep it.</p></a>
+          <a class="panel pad" href="private.html" style="padding:14px"><b>Private swap →</b><p class="mono-sm muted" style="margin:6px 0 0">Gasless, MEV-shielded. The back room.</p></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="ft"></footer>
+<script src="app.js"></script>
+<script>
+  const R=document.getElementById('swRoute'), A=document.getElementById('rcvAmt'), S=document.getElementById('rcvSub'), CTA=document.getElementById('swCta');
+  const V={
+    quote:()=>{ R.textContent='ETH → intent solver → TON · 1 hop'; A.textContent='182.4'; S.textContent='≈ 182.4 TON · TonX';
+      CTA.innerHTML='<button class="btn-primary block">Review &amp; sign</button>'; },
+    loading:()=>{ R.innerHTML='finding best route <span class="blink">▮</span>'; A.textContent='···'; S.textContent='quoting…';
+      CTA.innerHTML='<button class="btn-primary block" style="opacity:.5">Fetching quote…</button>'; },
+    insufficient:()=>{ R.textContent='ETH → intent solver → TON · 1 hop'; A.textContent='182.4'; S.textContent='≈ 182.4 TON · TonX';
+      CTA.innerHTML='<div class="banner warn" style="margin:0"><span class="bi">!</span><div>You need <b>1.00 ETH</b>, wallet holds <b>0.42</b>. <a href="bridge.html">Bridge in</a> or lower the amount.</div></div>'; },
+    unavailable:()=>{ R.textContent='no route found for this pair'; A.textContent='—'; S.textContent='route unavailable';
+      CTA.innerHTML='<div class="banner" style="margin:0"><span class="bi">◎</span><div>No solver route for this pair right now. Try a different output token or bridge first.</div></div>'; }
+  };
+  function showState(n){ V[n](); document.querySelectorAll('.statebar .sb').forEach(b=>b.classList.toggle('on', b.dataset.state===n)); }
+  document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>showState(b.dataset.state)));
+  showState('quote');
+</script>
+</body>
+</html>
