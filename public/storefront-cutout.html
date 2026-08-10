@@ -3,21 +3,26 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mizo — Cut-out bin · wireframe</title>
+<title>Mizo — Cut-out bin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800;900&family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
-<link rel="stylesheet" href="mizo.css"/>
+<link rel="stylesheet" href="v6.css"/>
 </head>
 <body data-page="cutout">
-<header class="nav"></header>
 
-<main class="wrap">
+<div class="page">
 
-  <div class="sec"><span class="no">§5.1 · §15</span><h2>The cut-out bin · dead records, kept visible</h2><span class="jp">切</span></div>
+  <div class="phead">
+    <div>
+      <span class="kicker">✳ Dead tokens, kept visible</span>
+      <h1>THE CUT-OUT BIN</h1>
+    </div>
+    <span class="jp">切</span>
+  </div>
 
-  <div class="note" style="margin-bottom:22px"><b>Nothing is delisted or hidden.</b> A cut-out is a state on the record, not a quarantine — it stays browsable and linkable. Removing dead tokens would imply the rest are endorsed. Demotion is mechanical and dated.</div>
+  <div class="note" style="margin-bottom:16px"><b>Nothing is delisted or hidden.</b> A cut-out is a state on the token, not a quarantine — it stays browsable and linkable. Removing dead tokens would imply the rest are endorsed. Demotion is mechanical and dated.</div>
 
   <div class="statebar">
     <span class="sl">state</span>
@@ -26,33 +31,28 @@
   </div>
 
   <div data-sv="full">
-    <div class="shelf-tag"><b>Cut-out</b> — notched sleeve · demotion reason + date <span class="cap">still tradeable</span></div>
-    <div class="crate" id="cutBin"></div>
+    <div class="shelf-tag"><b>Cut-out</b> — demotion reason + date <span class="cap">still tradeable</span></div>
+    <div class="cards g4" id="cutBin"></div>
   </div>
 
   <div data-sv="empty" style="display:none">
-    <div class="empty"><div class="em-ico">空</div><h3>Bin's clean</h3><p>No records have been cut on this store yet. When one goes POOR or stalls out, it lands here.</p></div>
+    <div class="empty"><div class="em-ico">空</div><h3>Bin's clean</h3><p>No tokens have been cut on this chain yet. When one goes POOR or stalls out, it lands here.</p></div>
   </div>
 
-</main>
+  <footer class="ft"></footer>
+</div>
 
-<footer class="ft"></footer>
-<script src="app.js"></script>
+<script src="v6.js"></script>
 <script>
   const REASONS=['POOR · sell tax','no trades 72h','liquidity below floor','LP pulled','deployer dumped'];
-  const dead=[['Warp & Wow','WARP','bnb','POOR','CUT-OUT','$0.00004','$2K','4d','d3','歪'],
-    ['Skip Groove','SKIP','sol','POOR','CUT-OUT','$0.0000021','$900','6d','d1','飛'],
-    ['Dead Wax','DWAX','eth','POOR','CUT-OUT','$0.00008','$3K','9d','d2','蝋'],
-    ['Locked Groove','LOCK','hood','POOR','CUT-OUT','$0.0000009','$400','11d','d4','錠'],
-    ['Off Center','OFFC','ton','POOR','CUT-OUT','$0.00003','$1.4K','5d','d3','偏'],
-    ['Ghost Pressing','GHST','base','POOR','CUT-OUT','$0.0000004','$220','14d','d1','霊']];
-  const el=document.getElementById('cutBin');
-  el.innerHTML = dead.map((t,i)=>obiCard(t,'wall').replace('</a>',
-    '<div class="obi-meta" style="padding:0 12px 12px"><span class="state cut">cut '+(i+3)+'d ago · '+REASONS[i%REASONS.length]+'</span></div></a>')).join('');
-  function showState(n){ document.querySelectorAll('[data-sv]').forEach(v=>v.style.display=v.dataset.sv===n?'':'none');
-    document.querySelectorAll('.statebar .sb').forEach(b=>b.classList.toggle('on', b.dataset.state===n)); }
-  document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>showState(b.dataset.state)));
-  showState('full');
+  const dead=[['Warp & Wow','WARP','bnb','POOR','CUT-OUT','$0.00004','$2K','4d',2,'歪'],
+    ['Skip Groove','SKIP','sol','POOR','CUT-OUT','$0.0000021','$900','6d',0,'飛'],
+    ['Dead Wax','DWAX','eth','POOR','CUT-OUT','$0.00008','$3K','9d',1,'蝋'],
+    ['Locked Groove','LOCK','hood','POOR','CUT-OUT','$0.0000009','$400','11d',3,'錠'],
+    ['Off Center','OFFC','ton','POOR','CUT-OUT','$0.00003','$1.4K','5d',2,'偏'],
+    ['Ghost Pressing','GHST','base','POOR','CUT-OUT','$0.0000004','$220','14d',0,'霊']];
+  renderGrid('#cutBin', dead, (t,i)=>'<div class="card-note">cut '+(i+3)+'d ago · '+REASONS[i%REASONS.length]+'</div>');
+  wireStatebar({}, 'full');
 </script>
 </body>
 </html>

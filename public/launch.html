@@ -3,67 +3,69 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mizo — Launch · wireframe</title>
+<title>Mizo — Launch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="mizo.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800;900&family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="stylesheet" href="v6.css"/>
 </head>
 <body data-page="launch">
-<header class="nav"></header>
 
-<main class="wrap" style="padding-top:26px">
+<div class="page">
 
-  <div class="between" style="margin-bottom:16px">
+  <div class="phead">
     <div>
-      <h1 class="display" style="font-size:40px">Cut a record</h1>
-      <span class="kicker">§10 F2 · target: under 60 seconds, connect → live</span>
+      <span class="kicker">✳ Under 60 seconds · connect → live</span>
+      <h1>LAUNCH</h1>
     </div>
-    <span class="tag proposal">chain picker first · live obi preview</span>
+    <span class="tag">chain picker first · live card preview</span>
   </div>
 
-  <div class="steps" data-steps style="margin-bottom:24px">
-    <div class="st on" data-step="1"><b>01</b>Pick a store</div>
-    <div class="st" data-step="2"><b>02</b>The record</div>
-    <div class="st" data-step="3"><b>03</b>Cut & confirm</div>
+  <div class="steps" data-steps>
+    <div class="st on" data-step="1"><b>01</b>Pick a chain</div>
+    <div class="st" data-step="2"><b>02</b>The token</div>
+    <div class="st" data-step="3"><b>03</b>Cut &amp; confirm</div>
   </div>
 
-  <div class="grid g2" style="grid-template-columns:1.15fr .85fr; align-items:start">
+  <div class="grid" style="grid-template-columns:1.15fr .85fr;align-items:start;gap:12px">
 
     <!-- LEFT: steps -->
     <div>
       <!-- STEP 1 -->
       <div class="stepview on" data-view="1">
-        <div class="sec"><span class="no">01</span><h2>Which store are you pressing in?</h2><span class="jp">店</span></div>
-        <div class="grid g3" id="chainPick"></div>
-        <div class="note" style="margin-top:18px">Chain sets your accent colour, gas symbol and where the record lives. Everything downstream is identical — that's the template (§11.2).</div>
-        <button class="btn" data-goto="2" style="margin-top:18px">Next: the record →</button>
+        <div class="panel pad">
+          <span class="kicker">01 · which chain are you pressing on?</span>
+          <div class="grid g3" id="chainPick" style="margin-top:14px"></div>
+          <div class="note" style="margin-top:14px">Chain sets the gas symbol and where the token lives. Everything downstream is identical — that's the template.</div>
+          <button class="btn btn-accent" data-goto="2" style="margin-top:14px">Next: the token →</button>
+        </div>
       </div>
 
       <!-- STEP 2 -->
       <div class="stepview" data-view="2">
-        <div class="sec"><span class="no">02</span><h2>The record</h2><span class="jp">盤</span></div>
-        <div class="grid g2" style="grid-template-columns:180px 1fr; align-items:start">
-          <div class="field">
-            <label>Square cover · the only variable</label>
-            <div class="upload">Drop artwork<br>1:1 · never cropped</div>
+        <div class="panel pad">
+          <span class="kicker">02 · the token</span>
+          <div class="grid" style="grid-template-columns:180px 1fr;align-items:start;margin-top:14px">
+            <div class="field">
+              <label>Square cover · the only variable</label>
+              <div class="upload">Drop artwork<br>1:1 · never cropped</div>
+            </div>
+            <div>
+              <div class="field"><label>Name</label><input value="Groove Theory"/></div>
+              <div class="field"><label>Ticker</label><input value="GROOVE"/></div>
+              <div class="field"><label>Socials · site / x / tg</label><input placeholder="optional"/></div>
+            </div>
           </div>
-          <div>
-            <div class="field"><label>Name</label><input value="Groove Theory"/></div>
-            <div class="field"><label>Ticker</label><input value="GROOVE"/></div>
-            <div class="field"><label>Socials · site / x / tg</label><input placeholder="optional"/></div>
+          <div class="bar" style="margin-top:6px">
+            <button class="btn btn-ghost sm" data-goto="1">← back</button>
+            <button class="btn btn-accent sm" data-goto="3">Next: cut &amp; confirm →</button>
           </div>
-        </div>
-        <div class="bar">
-          <button class="btn ghost" data-goto="1">← back</button>
-          <button class="btn" data-goto="3">Next: cut & confirm →</button>
         </div>
       </div>
 
       <!-- STEP 3 -->
       <div class="stepview" data-view="3">
-        <div class="sec"><span class="no">03</span><h2>Cut &amp; confirm</h2><span class="jp">刻</span></div>
-
         <div class="statebar">
           <span class="sl">flow</span>
           <button class="sb on" data-state="confirm">confirm</button>
@@ -74,81 +76,79 @@
         </div>
 
         <div id="launchConfirm">
-          <div class="panel pad" style="margin-bottom:14px">
+          <div class="panel pad" style="margin-bottom:12px">
             <div class="kv">
-              <span class="k">store</span><span id="sumChain">HoodX</span>
+              <span class="k">chain</span><span id="sumChain">ROBINHOOD</span>
               <span class="k">curve</span><span>bonding · graduates at $XXk mcap</span>
               <span class="k">launch cost</span><span>≈ 0.02 SOL network + 0 platform</span>
               <span class="k">opening grade</span><span>UNGRADED → re-graded within 15 min</span>
-              <span class="k">initial state</span><span>SEALED · obi intact</span>
+              <span class="k">initial state</span><span>SEALED · band intact</span>
             </div>
           </div>
-          <button class="btn block" style="margin-bottom:8px" id="signBtn">Sign &amp; press the record</button>
-          <div class="bar"><button class="btn ghost" data-goto="2">← back</button><span class="mono-sm muted">wallet will prompt to sign · one screen, no interstitial</span></div>
+          <button class="btn btn-accent block" style="margin-bottom:8px" id="signBtn">Sign &amp; press the token</button>
+          <div class="between"><button class="btn btn-ghost sm" data-goto="2">← back</button><span class="mono-sm muted">wallet will prompt to sign · one screen, no interstitial</span></div>
         </div>
 
         <div id="launchResult" style="display:none"></div>
       </div>
     </div>
 
-    <!-- RIGHT: live obi preview -->
-    <div style="position:sticky; top:74px">
-      <span class="kicker">live preview · obi updates as you type</span>
-      <div class="obi-card hero" style="margin-top:12px">
-        <div class="obi">
-          <div class="grade-b">—</div>
-          <div class="v" id="pvChain">HoodX</div>
-          <div class="dot"></div>
-        </div>
-        <div class="obi-body">
-          <div class="cover d2"><div class="glyph">溝</div></div>
-          <div class="obi-meta">
-            <div class="row"><span class="tkr">$GROOVE</span><span class="mono-sm muted">0m</span></div>
-            <div class="row"><span class="k">state</span><span class="mono-sm">sealed · ungraded</span></div>
-            <div class="row"><span class="k">store</span><span class="mono-sm" id="pvChain2">HoodX</span></div>
-          </div>
-        </div>
+    <!-- RIGHT: live card preview -->
+    <div style="position:sticky;top:12px">
+      <div class="panel pad">
+        <span class="kicker">live preview · card updates as you type</span>
+        <div class="cards" style="grid-template-columns:1fr;margin-top:14px;max-width:280px" id="pvCard"></div>
+        <div class="note" style="margin-top:14px">One card, one square — the entire sub-brand system. Its job: make a low-effort JPEG look good inside a good frame.</div>
       </div>
-      <div class="note" style="margin-top:14px">One band, one square — the entire sub-brand system. Its job: make a low-effort JPEG look good inside a good frame.</div>
     </div>
   </div>
 
-</main>
+  <footer class="ft"></footer>
+</div>
 
-<footer class="ft"></footer>
-<script src="app.js"></script>
+<script src="v6.js"></script>
 <script>
+  // live preview card
+  let pvChain = CHAINS[0];
+  function renderPv(){
+    document.getElementById('pvCard').innerHTML =
+      tokenCard(['Groove Theory','GROOVE',pvChain.slug,'UNGRADED','SEALED','—','$0','0m',0,'溝'])
+      .replace('record.html?t=GROOVE&c='+pvChain.slug,'#');
+  }
+  renderPv();
+
   // chain picker
   const el = document.getElementById('chainPick');
   el.innerHTML = CHAINS.map((c,i)=>`
-    <label class="chain-sw ${i===0?'on':''}" style="justify-content:flex-start" data-slug="${c.slug}" data-name="${c.name}">
-      ${icon(c.slug)}<span class="nm">${c.name}</span>
-    </label>`).join('');
-  el.querySelectorAll('.chain-sw').forEach(sw=>sw.addEventListener('click',()=>{
-    el.querySelectorAll('.chain-sw').forEach(x=>x.classList.remove('on'));
+    <button class="chip${i===0?' on':''}" style="text-align:left;padding:12px 14px" data-slug="${c.slug}" data-name="${c.name}">
+      <span class="jp" style="font-family:var(--font-jp);margin-right:8px">${c.kanji}</span>${c.name}
+    </button>`).join('');
+  el.querySelectorAll('.chip').forEach(sw=>sw.addEventListener('click',()=>{
+    el.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
     sw.classList.add('on');
-    const nm = sw.dataset.name;
-    ['pvChain','pvChain2','sumChain'].forEach(id=>document.getElementById(id).textContent=nm);
+    pvChain = chainBy(sw.dataset.slug);
+    document.getElementById('sumChain').textContent = sw.dataset.name;
+    renderPv();
   }));
 
   /* ---- launch flow states ---- */
-  const confirm=document.getElementById('launchConfirm'), result=document.getElementById('launchResult');
+  const confirmEl=document.getElementById('launchConfirm'), result=document.getElementById('launchResult');
   const LS={
-    confirm(){ confirm.style.display=''; result.style.display='none'; result.innerHTML=''; },
+    confirm(){ confirmEl.style.display=''; result.style.display='none'; result.innerHTML=''; },
     signing(){ show('<div class="txcard"><div class="spin"></div><b>Waiting for signature</b><span class="mono-sm muted">approve in your wallet · one screen, no interstitial</span></div>'); },
-    pending(){ show('<div class="txcard"><div class="spin"></div><b>Pressing the record…</b><span class="mono-sm muted">tx broadcast · deploying curve · ~6s</span><div class="progress" style="width:100%;margin-top:4px"><i style="inset:0 30% 0 0"></i></div></div>'); },
-    success(){ show('<div class="txcard"><div class="done">✓</div><b>$GROOVE is live on HoodX</b><span class="mono-sm muted">sealed · ungraded · re-graded within 15 min</span>'+
-      '<div class="obi-card wall" style="width:150px;margin:6px auto"><div class="obi"><div class="grade-b">—</div><div class="v">HoodX</div><div class="dot"></div></div>'+
-      '<div class="obi-body"><div class="cover d2"><div class="glyph">溝</div></div><div class="obi-meta"><div class="row"><span class="tkr">$GROOVE</span><span class="mono-sm muted">0m</span></div><div class="row"><span class="k">state</span><span class="mono-sm">still sealed</span></div></div></div></div>'+
-      '<div class="bar" style="justify-content:center"><button class="btn">Share card ↗</button><a class="btn ghost" href="record.html?t=GROOVE&c=hood">View record →</a></div></div>'); },
-    failure(){ show('<div class="txcard"><div class="fail">!</div><b>Press failed</b><span class="mono-sm muted">signature rejected or network dropped · nothing was spent</span><button class="btn" id="retry">Try again</button></div>'); },
+    pending(){ show('<div class="txcard"><div class="spin"></div><b>Pressing the token…</b><span class="mono-sm muted">tx broadcast · deploying curve · ~6s</span><div class="progress"><i style="inset:0 30% 0 0"></i></div></div>'); },
+    success(){ show('<div class="txcard"><div class="done">✓</div><b>$GROOVE is live on '+pvChain.name+'</b><span class="mono-sm muted">sealed · ungraded · re-graded within 15 min</span>'+
+      '<div class="bar"><button class="btn btn-ghost sm">Share card ↗</button><a class="btn btn-accent sm" href="record.html?t=GROOVE&c='+pvChain.slug+'">View token →</a></div></div>'); },
+    failure(){ show('<div class="txcard"><div class="fail">!</div><b>Press failed</b><span class="mono-sm muted">signature rejected or network dropped · nothing was spent</span><button class="btn btn-ghost sm" id="retry">Try again</button></div>'); },
   };
-  function show(html){ confirm.style.display='none'; result.style.display=''; result.innerHTML=html;
+  function show(html){ confirmEl.style.display='none'; result.style.display=''; result.innerHTML=html;
     const r=document.getElementById('retry'); if(r) r.addEventListener('click',()=>setState('confirm')); }
   function setState(n){ LS[n](); document.querySelectorAll('.statebar .sb').forEach(b=>b.classList.toggle('on',b.dataset.state===n)); }
   document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>setState(b.dataset.state)));
   document.getElementById('signBtn').addEventListener('click',()=>{ setState('signing');
     setTimeout(()=>setState('pending'),900); setTimeout(()=>setState('success'),2100); });
+
+  wireSteps();
 </script>
 </body>
 </html>

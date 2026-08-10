@@ -3,57 +3,62 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mizo — Grading rubric · wireframe</title>
+<title>Mizo — Grading rubric</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800;900&family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
-<link rel="stylesheet" href="mizo.css"/>
+<link rel="stylesheet" href="v6.css"/>
 </head>
 <body data-page="grading">
-<header class="nav"></header>
 
-<main class="wrap">
+<div class="page">
 
-  <div class="sec"><span class="no">§6</span><h2>The grading rubric · public, versioned, computed</h2><span class="jp">格</span></div>
+  <div class="phead">
+    <div>
+      <span class="kicker">✳ Public · versioned · computed</span>
+      <h1>THE GRADING RUBRIC</h1>
+    </div>
+    <span class="jp">格</span>
+  </div>
 
-  <div class="note" style="margin-bottom:24px"><b>A grade describes on-chain properties only. Never merit, never advice.</b> Every grade is computed automatically from on-chain data and external APIs — no human sets one. Timestamped, re-evaluated on a fixed interval, and anyone can check the maths here. <span class="tag proposal">thresholds provisional · pending data spec §18</span></div>
+  <div class="note" style="margin-bottom:16px"><b>A grade describes on-chain properties only. Never merit, never advice.</b> Every grade is computed automatically from on-chain data and external APIs — no human sets one. Timestamped, re-evaluated on a fixed interval, and anyone can check the maths here. <span class="tag" style="margin-left:8px">thresholds provisional · pending data spec</span></div>
 
   <div class="stack" id="ladder"></div>
 
   <hr class="rule"/>
 
-  <div class="grid g2" style="gap:24px; align-items:start">
+  <div class="grid g2" style="align-items:start">
     <div class="panel pad">
       <span class="kicker">wall entry</span>
-      <h3 class="display" style="font-size:22px;margin:8px 0 10px">How a record reaches the wall</h3>
+      <h3 style="font-family:var(--font-disp);font-weight:900;font-size:20px;color:#c9c5b6;margin:10px 0 12px">How a token reaches the wall</h3>
       <div class="kv">
         <span class="k">grade</span><span>VG+ or better</span>
         <span class="k">status</span><span>graduated from the bonding curve</span>
         <span class="k">age</span><span>above the minimum age floor</span>
         <span class="k">volume</span><span>above the volume floor</span>
-        <span class="k">slots</span><span>12 per store, ranked, ties broken by volume</span>
+        <span class="k">slots</span><span>12 per chain, ranked, ties broken by volume</span>
       </div>
     </div>
     <div class="panel pad">
       <span class="kicker">cut-out trigger</span>
-      <h3 class="display" style="font-size:22px;margin:8px 0 10px">How a record gets cut</h3>
+      <h3 style="font-family:var(--font-disp);font-weight:900;font-size:20px;color:#c9c5b6;margin:10px 0 12px">How a token gets cut</h3>
       <div class="kv">
         <span class="k">grade</span><span>drops to POOR</span>
         <span class="k">or</span><span>no trades in 72 hours</span>
         <span class="k">or</span><span>liquidity below floor for 24 hours</span>
         <span class="k">result</span><span>demoted to the cut-out bin — mechanical, never taste</span>
-        <span class="k">note</span><span>the record stays browsable and linkable, never delisted</span>
+        <span class="k">note</span><span>the token stays browsable and linkable, never delisted</span>
       </div>
     </div>
   </div>
 
-  <div class="note" style="margin-top:24px"><b>Never:</b> safe, guaranteed, vetted, approved, recommended. Standard grade copy reads "MINT — LP burned, mint authority revoked, no sell tax," never "safe" or "good investment." No manual overrides, and the product says so.</div>
+  <div class="note" style="margin-top:16px"><b>Never:</b> safe, guaranteed, vetted, approved, recommended. Standard grade copy reads "MINT — LP burned, mint authority revoked, no sell tax," never "safe" or "good investment." No manual overrides, and the product says so.</div>
 
-</main>
+  <footer class="ft"></footer>
+</div>
 
-<footer class="ft"></footer>
-<script src="app.js"></script>
+<script src="v6.js"></script>
 <script>
   const LADDER=[
     ['MINT','A','still sealed, nobody has touched it','LP locked or burned · mint authority revoked · no sell tax · top-10 under 25% · deployer under 5% · liquidity above floor'],
@@ -64,10 +69,10 @@
     ['UNGRADED','—','awaiting grading','Under 15 minutes old or insufficient data. A live countdown to first grading shows in its place'],
   ];
   document.getElementById('ladder').innerHTML = LADDER.map(g=>
-    '<div class="panel pad" style="display:grid;grid-template-columns:auto auto 1fr;gap:18px;align-items:center;padding:16px 20px">'+
-      '<span class="grade"><span class="g '+(g[0]==='UNGRADED'?'ung':'')+'">'+g[1]+'</span><span class="txt">'+g[0]+'<small>'+g[2]+'</small></span></span>'+
-      '<span></span>'+
-      '<span class="mono-sm muted" style="line-height:1.6">'+g[3]+'</span>'+
+    '<div class="panel" style="display:grid;grid-template-columns:64px 220px 1fr;gap:20px;align-items:center;padding:15px 18px">'+
+      '<span class="gradebadge'+(g[0]==='UNGRADED'?' ung':'')+'">'+g[1]+'</span>'+
+      '<span><b style="font-family:var(--font-mono);font-size:12px;letter-spacing:.14em">'+g[0]+'</b><br><span class="mono-sm muted">'+g[2]+'</span></span>'+
+      '<span class="mono-sm" style="color:var(--ink-dim);line-height:1.7">'+g[3]+'</span>'+
     '</div>').join('');
 </script>
 </body>

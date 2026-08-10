@@ -3,19 +3,24 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mizo — Bridge · wireframe</title>
+<title>Mizo — Bridge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800;900&family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
-<link rel="stylesheet" href="mizo.css"/>
+<link rel="stylesheet" href="v6.css"/>
 </head>
 <body data-page="bridge">
-<header class="nav"></header>
 
-<main class="wrap">
+<div class="page">
 
-  <div class="sec"><span class="no">§9 · §10</span><h2>Bridge · the import counter</h2><span class="jp">橋</span></div>
+  <div class="phead">
+    <div>
+      <span class="kicker">✳ The import counter · move an asset, keep it</span>
+      <h1>BRIDGE</h1>
+    </div>
+    <span class="jp">橋</span>
+  </div>
 
   <div class="statebar">
     <span class="sl">state</span>
@@ -25,13 +30,17 @@
     <button class="sb" data-state="stuck">stuck</button>
   </div>
 
-  <div class="grid g2" style="align-items:start; gap:26px; grid-template-columns:minmax(0,420px) 1fr">
+  <div class="grid" style="align-items:start;grid-template-columns:minmax(0,440px) 1fr;gap:12px">
     <div class="stack">
-      <div class="swapleg"><div class="top"><span>move in</span><span>balance 4.20 ETH · EthX</span></div>
-        <div class="between"><span class="amt">1.00</span><span class="chain-sw on"><span class="nm">ETH · EthX ▾</span></span></div></div>
+      <div class="swapleg">
+        <div class="top"><span>move in</span><span>balance 4.20 ETH · Ethereum</span></div>
+        <div class="between"><span class="amt">1.00</span><button class="tokpick">ETH · ETHEREUM ▾</button></div>
+      </div>
       <div class="leg-mid">⇄</div>
-      <div class="swapleg"><div class="top"><span>arrives on</span><span>your SolX address</span></div>
-        <div class="between"><span class="amt">≈ 0.99</span><span class="chain-sw"><span class="nm">ETH · SolX ▾</span></span></div></div>
+      <div class="swapleg">
+        <div class="top"><span>arrives on</span><span>your Solana address</span></div>
+        <div class="between"><span class="amt">≈ 0.99</span><button class="tokpick">ETH · SOLANA ▾</button></div>
+      </div>
 
       <div class="route" id="brInfo">
         <div class="rr"><span>ETA</span><b>~40 seconds</b></div>
@@ -39,34 +48,32 @@
         <div class="rr"><span>protection</span><b>one signature · MEV-shielded</b></div>
       </div>
 
-      <div id="brCta"><button class="btn-primary block">Review &amp; sign</button></div>
+      <div id="brCta"><button class="btn btn-accent block">Review &amp; sign</button></div>
     </div>
 
     <div class="stack" id="brSide">
-      <div class="note"><b>Bridge then buy, in one intent.</b> When a record detail shows you can't pay in the store's currency, the same bridge fires inline — route, fee and ETA shown once, one signature, and you hold the token. Never two screens and a guess about which bridge is real.</div>
+      <div class="note"><b>Bridge then buy, in one intent.</b> When a token detail shows you can't pay in that chain's currency, the same bridge fires inline — route, fee and ETA shown once, one signature, and you hold the token. Never two screens and a guess about which bridge is real.</div>
     </div>
   </div>
 
-</main>
+  <footer class="ft"></footer>
+</div>
 
-<footer class="ft"></footer>
-<script src="app.js"></script>
+<script src="v6.js"></script>
 <script>
   const CTA=document.getElementById('brCta'), SIDE=document.getElementById('brSide'), INFO=document.getElementById('brInfo');
   const baseSide=SIDE.innerHTML;
   const V={
     quoting:()=>{ INFO.querySelector('b').innerHTML='calculating <span class="blink">▮</span>';
-      CTA.innerHTML='<button class="btn-primary block">Review &amp; sign</button>'; SIDE.innerHTML=baseSide; },
-    flight:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="spin"></div><b>Bridging 1.00 ETH → SolX</b><span class="mono-sm muted">signed · solver routing · ~40s</span><div class="progress" style="width:100%"><i style="inset:0 45% 0 0"></i></div></div>';
+      CTA.innerHTML='<button class="btn btn-accent block">Review &amp; sign</button>'; SIDE.innerHTML=baseSide; },
+    flight:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="spin"></div><b>Bridging 1.00 ETH → Solana</b><span class="mono-sm muted">signed · solver routing · ~40s</span><div class="progress"><i style="inset:0 45% 0 0"></i></div></div>';
       SIDE.innerHTML='<div class="banner"><span class="bi">◷</span><div><b>In flight.</b> You can leave this screen — the bridge completes in the background and lands in your wallet. Points accrue on settle.</div></div>'; },
-    complete:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="done">✓</div><b>0.99 ETH landed on SolX</b><span class="mono-sm muted">40s · fee 0.001 ETH · +12 points</span><button class="btn-primary" style="margin-top:6px">Buy on SolX →</button></div>';
-      SIDE.innerHTML='<div class="banner"><span class="bi">✓</span><div><b>Done.</b> Funds and attention stayed on-platform. Straight into a store to spend them.</div></div>'; },
-    stuck:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="fail">!</div><b>Taking longer than usual</b><span class="mono-sm muted">source confirmed · awaiting destination · 4m</span><button class="btn-primary" style="margin-top:6px">View on explorer →</button></div>';
+    complete:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="done">✓</div><b>0.99 ETH landed on Solana</b><span class="mono-sm muted">40s · fee 0.001 ETH · +12 points</span><button class="btn btn-accent sm" style="margin-top:6px">Buy on Solana →</button></div>';
+      SIDE.innerHTML='<div class="banner"><span class="bi">✓</span><div><b>Done.</b> Funds and attention stayed on-platform. Straight into the bin to spend them.</div></div>'; },
+    stuck:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="fail">!</div><b>Taking longer than usual</b><span class="mono-sm muted">source confirmed · awaiting destination · 4m</span><button class="btn btn-ghost sm" style="margin-top:6px">View on explorer →</button></div>';
       SIDE.innerHTML='<div class="banner warn"><span class="bi">!</span><div><b>Stuck, not lost.</b> Source chain confirmed, destination is slow. Funds are recoverable — status stays live and a support path is one tap away.</div></div>'; }
   };
-  function showState(n){ V[n](); document.querySelectorAll('.statebar .sb').forEach(b=>b.classList.toggle('on', b.dataset.state===n)); }
-  document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>showState(b.dataset.state)));
-  showState('quoting');
+  wireStatebar(V,'quoting');
 </script>
 </body>
 </html>

@@ -3,19 +3,24 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mizo — Portfolio · wireframe</title>
+<title>Mizo — Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800;900&family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
-<link rel="stylesheet" href="mizo.css"/>
+<link rel="stylesheet" href="v6.css"/>
 </head>
 <body data-page="portfolio">
-<header class="nav"></header>
 
-<main class="wrap">
+<div class="page">
 
-  <div class="sec"><span class="no">§9</span><h2>Your shelf · holdings across every chain</h2><span class="jp">棚</span></div>
+  <div class="phead">
+    <div>
+      <span class="kicker">✳ Your shelf · holdings across every chain</span>
+      <h1>PORTFOLIO</h1>
+    </div>
+    <span class="jp">棚</span>
+  </div>
 
   <div class="statebar">
     <span class="sl">state</span>
@@ -26,43 +31,40 @@
 
   <!-- CONNECTED -->
   <div data-sv="connected">
-    <div class="strip" style="margin-bottom:24px">
+    <div class="strip" style="margin-bottom:14px">
       <div><div class="n">$12,480</div><div class="l">total value</div></div>
-      <div><div class="n">+8.4%</div><div class="l">24h P&amp;L</div></div>
+      <div><div class="n" style="color:var(--up)">+8.4%</div><div class="l">24h P&amp;L</div></div>
       <div><div class="n">6</div><div class="l">chains held</div></div>
       <div><div class="n">9</div><div class="l">positions</div></div>
       <div><div class="n">2,410</div><div class="l">points</div></div>
       <div><div class="n">#318</div><div class="l">airdrop rank</div></div>
     </div>
 
-    <div class="shelf-tag"><b>Positions</b> — records you hold <span class="cap">across 6 stores</span></div>
-    <div class="crate" id="holdings"></div>
+    <div class="shelf-tag"><b>Positions</b> — tokens you hold <span class="cap">across 6 chains</span></div>
+    <div class="cards" id="holdings"></div>
 
-    <div class="note" style="margin-top:26px"><b>Points → airdrop.</b> Every trade, swap, launch and private swap earns points. 50% of $MIZO supply is reserved for the airdrop. Balances, rates, leaderboard and decay are placeholders pending the points spec.</div>
+    <div class="note" style="margin-top:22px"><b>Points → airdrop.</b> Every trade, swap, launch and private swap earns points. 50% of $MIZO supply is reserved for the airdrop. Balances, rates, leaderboard and decay are placeholders pending the points spec.</div>
   </div>
 
   <!-- EMPTY -->
   <div data-sv="empty" style="display:none">
-    <div class="empty"><div class="em-ico">棚</div><h3>Shelf's empty</h3><p>Wallet's connected but you hold nothing yet. Flip the bins and pick up your first record.</p>
-      <a class="btn" href="discover.html" style="margin-top:6px">Go to Discover →</a></div>
+    <div class="empty"><div class="em-ico">棚</div><h3>Shelf's empty</h3><p>Wallet's connected but you hold nothing yet. Flip the bins and pick up your first token.</p>
+      <a class="btn btn-accent sm" href="discover.html" style="margin-top:6px">Go to Explore →</a></div>
   </div>
 
   <!-- NOT CONNECTED -->
   <div data-sv="off" style="display:none">
-    <div class="empty"><div class="em-ico">財</div><h3>Connect to see your shelf</h3><p>Browsing every store is free. Connect a wallet to hold, trade and track positions across all chains from one place.</p>
-      <button class="btn" style="margin-top:6px" onclick="if(window.mzOpenWallet)window.mzOpenWallet()">Connect wallet</button></div>
+    <div class="empty"><div class="em-ico">財</div><h3>Connect to see your shelf</h3><p>Browsing every chain is free. Connect a wallet to hold, trade and track positions across all chains from one place.</p>
+      <button class="btn btn-accent sm" style="margin-top:6px" onclick="openWallet()">Connect wallet</button></div>
   </div>
 
-</main>
+  <footer class="ft"></footer>
+</div>
 
-<footer class="ft"></footer>
-<script src="app.js"></script>
+<script src="v6.js"></script>
 <script>
-  renderGrid('#holdings', TOKENS.filter(t=>t[4]!=='CUT-OUT').slice(0,8), 'wall');
-  function showState(n){ document.querySelectorAll('[data-sv]').forEach(v=>v.style.display=v.dataset.sv===n?'':'none');
-    document.querySelectorAll('.statebar .sb').forEach(b=>b.classList.toggle('on', b.dataset.state===n)); }
-  document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>showState(b.dataset.state)));
-  showState('connected');
+  renderGrid('#holdings', TOKENS.filter(t=>t[4]!=='CUT-OUT').slice(0,6));
+  wireStatebar({}, 'connected');
 </script>
 </body>
 </html>

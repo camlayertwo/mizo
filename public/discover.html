@@ -3,21 +3,26 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mizo — Discover · wireframe</title>
+<title>Mizo — Explore</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800;900&family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
-<link rel="stylesheet" href="mizo.css"/>
+<link rel="stylesheet" href="v6.css"/>
 </head>
 <body data-page="discover">
-<header class="nav"></header>
 
-<main class="wrap">
+<div class="page">
 
-  <div class="sec"><span class="no">§9.1 P</span><h2>Discover · flip the bin, every chain at once</h2><span class="jp">壁</span></div>
+  <div class="phead">
+    <div>
+      <span class="kicker">✳ Flip the bin · every chain at once</span>
+      <h1>EXPLORE</h1>
+    </div>
+    <span class="jp">壁</span>
+  </div>
 
-  <div class="bar" data-tabs style="margin-bottom:14px">
+  <div class="tabs">
     <span class="tab on">All</span><span class="tab">Movers</span><span class="tab">New</span>
     <span class="tab">Graduated</span><span class="tab">Cut-out</span>
     <span class="sep"></span>
@@ -35,52 +40,50 @@
   <!-- LIVE -->
   <div data-sv="live">
     <div class="shelf-tag"><b>Mizo-launched + graduated</b> — primary, always buyable <span class="cap">live · websocket</span></div>
-    <div class="crate" id="feedLive"></div>
-    <div class="note" style="margin:26px 0 14px"><b>External · DexScreener trending.</b> Separate, clearly labelled band. Visible but not buyable — selecting one links off-platform.</div>
-    <div class="crate" id="feedExt"></div>
+    <div class="cards" id="feedLive"></div>
+    <div class="note" style="margin:22px 0 12px"><b>External · DexScreener trending.</b> Separate, clearly labelled band. Visible but not buyable — selecting one links off-platform.</div>
+    <div class="cards" id="feedExt"></div>
   </div>
 
   <!-- LOADING -->
   <div data-sv="loading" style="display:none">
-    <div class="crate" id="feedSkel"></div>
+    <div class="cards" id="feedSkel"></div>
   </div>
 
   <!-- EMPTY -->
   <div data-sv="empty" style="display:none">
-    <div class="empty"><div class="em-ico">空</div><h3>Nothing in this bin</h3><p>No records match this filter right now. Try another shelf.</p></div>
+    <div class="empty"><div class="em-ico">空</div><h3>Nothing in this bin</h3><p>No tokens match this filter right now. Try another shelf.</p></div>
   </div>
 
   <!-- ERROR -->
   <div data-sv="error" style="display:none">
-    <div class="banner warn"><span class="bi">!</span><div>External market data is unavailable. <b>Own-launchpad records still render</b> — the feed degrades, it never goes blank.</div></div>
+    <div class="banner warn"><span class="bi">!</span><div>External market data is unavailable. <b>Own-launchpad tokens still render</b> — the feed degrades, it never goes blank.</div></div>
     <div class="shelf-tag"><b>Mizo-launched</b> — served from per-chain contracts <span class="cap">no external dep</span></div>
-    <div class="crate" id="feedOwn"></div>
+    <div class="cards" id="feedOwn"></div>
   </div>
 
-</main>
+  <footer class="ft"></footer>
+</div>
 
-<footer class="ft"></footer>
-<script src="app.js"></script>
+<script src="v6.js"></script>
 <script>
   const mizoLaunched = TOKENS.filter(t=>t[4]!=='CUT-OUT');
-  renderGrid('#feedLive', mizoLaunched, 'bin');
-  renderGrid('#feedOwn', mizoLaunched.slice(0,8), 'bin');
+  renderGrid('#feedLive', mizoLaunched);
+  renderGrid('#feedOwn', mizoLaunched.slice(0,6));
   // external tokens = illustrative, not buyable
-  const EXT = [['Pepe 2.0','PEPE2','eth','—','EXTERNAL','$0.0000018','$44M','—','d3','蛙'],
-    ['Wif Hat','WIF','sol','—','EXTERNAL','$2.31','$2.1B','—','d1','帽'],
-    ['Brett','BRETT','base','—','EXTERNAL','$0.14','$1.3B','—','d2','弟'],
-    ['Toshi','TOSHI','base','—','EXTERNAL','$0.0009','$300M','—','d4','敏']];
+  const EXT = [['Pepe 2.0','PEPE2','eth','—','EXTERNAL','$0.0000018','$44M','3d',2,'蛙'],
+    ['Wif Hat','WIF','sol','—','EXTERNAL','$2.31','$2.1B','1d',0,'帽'],
+    ['Brett','BRETT','base','—','EXTERNAL','$0.14','$1.3B','2d',3,'弟'],
+    ['Toshi','TOSHI','base','—','EXTERNAL','$0.0009','$300M','4d',1,'敏']];
   const ex = document.getElementById('feedExt');
-  ex.innerHTML = EXT.map(t=>obiCard(t,'bin')).join('');
-  ex.querySelectorAll('.obi-card').forEach(c=>{ c.setAttribute('href','#'); c.style.opacity='.72'; c.title='External · off-platform, not buyable'; });
+  ex.innerHTML = EXT.map(t=>tokenCard(t)).join('');
+  ex.querySelectorAll('.card').forEach(c=>{ c.setAttribute('href','#'); c.style.opacity='.72'; c.title='External · off-platform, not buyable';
+    c.querySelector('.mint-tag').textContent='EXT'; });
   // skeletons
   document.getElementById('feedSkel').innerHTML = Array.from({length:12}).map(()=>'<div class="skel skel-card"></div>').join('');
 
-  // states switcher
-  function showState(n){ document.querySelectorAll('[data-sv]').forEach(v=>v.style.display=v.dataset.sv===n?'':'none');
-    document.querySelectorAll('.statebar .sb').forEach(b=>b.classList.toggle('on', b.dataset.state===n)); }
-  document.querySelectorAll('.statebar .sb').forEach(b=>b.addEventListener('click',()=>showState(b.dataset.state)));
-  showState('live');
+  wireStatebar({}, 'live');
+  wireTabs();
 </script>
 </body>
 </html>
