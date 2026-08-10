@@ -92,10 +92,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:200;op
 .markrow{display:grid;grid-template-columns:1fr 200px;gap:10px;margin-bottom:10px}
 .wordmark{border:1px solid var(--line);background:var(--panel);border-radius:4px;overflow:hidden;display:flex;align-items:center;padding:6px 18px;position:relative}
 .wordmark .mizo-mark{width:100%;height:auto;display:block;mix-blend-mode:difference;user-select:none}
-.mark-img{border:1px solid var(--line);border-radius:4px;position:relative;overflow:hidden;background:
-  radial-gradient(circle at 30% 20%,#3d2f4a 0%,transparent 50%),
-  radial-gradient(circle at 70% 80%,#7a3b2e 0%,transparent 45%),
-  linear-gradient(160deg,#1c1a26 0%,#12110e 100%)}
+.mark-img{border:1px solid var(--line);border-radius:4px;position:relative;overflow:hidden;background:#12110e}
+.mark-img img,.side-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.mark-img img{object-position:50% 32%}
+.side-img img{object-position:50% 78%}
 .ph-tag{position:absolute;inset:auto 8px 8px auto;font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);border:1px dashed var(--line2);padding:3px 7px;border-radius:3px;background:rgba(0,0,0,.45)}
 
 /* ============ MARQUEE ============ */
@@ -265,7 +265,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:200;op
         <path mask="url(#wm-grain)" fill="#AFA69C" d="M183.836 111.429L275.481 0H364.826V248.182H268.745V153.101L186.845 248.182H177.627L96.082 153.149V248.182H0V0H88.9912L183.836 111.429ZM478.68 248.182H382.599V0H478.68V248.182ZM787.217 65.8701L638.863 179.754H787.217V248.182H495.427V182.299L643.426 68.4268H495.427V0H787.217V65.8701ZM1107 32.6182V215.563L1074.38 248.182H836.482L803.864 215.563V32.6182L836.482 0H1074.38L1107 32.6182ZM899.946 74.8086V173.372L906.328 179.754H1004.54L1010.92 173.372V74.8086L1004.54 68.4268H906.328L899.946 74.8086Z"/>
       </svg>
     </div>
-    <div class="mark-img"><span class="ph-tag">img · art TBD</span></div>
+    <div class="mark-img"><img src="art/city-comic.png" alt="MIZO city"></div>
   </div>
 
   <!-- ===== MARQUEE: platform info, placeholder content ===== -->
@@ -306,7 +306,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:200;op
         </svg>
         <span class="vtxt">レネサンス</span>
       </div>
-      <div class="side-img"><span class="kanji">図</span><span class="ph-tag">img · art TBD</span></div>
+      <div class="side-img"><img src="art/city-comic.png" alt="MIZO street"></div>
     </div>
   </section>
 
