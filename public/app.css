@@ -85,7 +85,7 @@ body.sb-expanded .sb-btn .lbl{display:block}
 body.sb-expanded .sb-btn .tip{display:none}
 
 /* ============ LAYOUT ============ */
-.page{margin-left:calc(var(--sidebar-w) + var(--sidebar-inset) + max(0px,(100vw - var(--sidebar-w) - var(--sidebar-inset) - 1560px)/2));padding:10px 14px 60px;max-width:1560px}
+.page{margin-left:calc(var(--sidebar-w) + var(--sidebar-inset) + max(0px,(100vw - var(--sidebar-w) - var(--sidebar-inset) - 1680px)/2));padding:10px 14px 60px;max-width:1680px}
 
 /* ============ TOP NAV ============ */
 .topnav{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:10px}
