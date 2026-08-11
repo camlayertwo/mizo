@@ -4,6 +4,18 @@
    Pages set <body data-page="..."> and this mounts everything.
    ============================================================ */
 
+/* ---------- page timer tracking ----------
+   Inline page scripts create intervals (clock, demo timeouts). The SPA
+   router clears them on navigation so dead pages stop ticking. */
+const _rawSetInterval = window.setInterval.bind(window);
+const _rawSetTimeout  = window.setTimeout.bind(window);
+const _pageTimers = [];
+window.setInterval = (...a)=>{ const id=_rawSetInterval(...a); _pageTimers.push(id); return id; };
+window.setTimeout  = (...a)=>{ const id=_rawSetTimeout(...a);  _pageTimers.push(id); return id; };
+function clearPageTimers(){
+  while(_pageTimers.length){ const id=_pageTimers.pop(); clearInterval(id); clearTimeout(id); }
+}
+
 /* ---------- nav model ---------- */
 const NAV = [
   { key:'home',      label:'Home',      href:'index.html',
@@ -169,6 +181,19 @@ function mountProduct(){
   document.body.appendChild(modal);
 
   /* footer */
+  fillFooter();
+
+  /* tickers */
+  const ticker = (el, rows)=>{
+    const one = rows.map(([n,v,dir]) =>
+      `<a class="tick-item" href="#"><b>${n}</b> ${v} <span class="${dir>0?'u':'d'}">${dir>0?'▲':'▼'}</span></a>`).join('');
+    const t = document.getElementById(el); if(t) t.innerHTML = one + one;
+  };
+  ticker('metasTrack', METAS);
+  ticker('chainsTrack', CHAINS6);
+}
+
+function fillFooter(){
   const ft = document.querySelector('.ft');
   if(ft) ft.innerHTML =
     '<div class="ft-in">'+
@@ -184,15 +209,6 @@ function mountProduct(){
     '<span>MINT · still sealed</span><span>NM · near perfect</span>'+
     '<span>VG+ · plays clean</span><span>GOOD · with noise</span>'+
     '<span>POOR · damaged → cut-out</span></div></div>';
-
-  /* tickers */
-  const ticker = (el, rows)=>{
-    const one = rows.map(([n,v,dir]) =>
-      `<a class="tick-item" href="#"><b>${n}</b> ${v} <span class="${dir>0?'u':'d'}">${dir>0?'▲':'▼'}</span></a>`).join('');
-    const t = document.getElementById(el); if(t) t.innerHTML = one + one;
-  };
-  ticker('metasTrack', METAS);
-  ticker('chainsTrack', CHAINS6);
 }
 
 function openWallet(){ document.getElementById('walletModal').classList.add('open'); }
@@ -236,3 +252,143 @@ function wireSteps(){
 }
 
 mountProduct();
+
+/* ============================================================
+   SPA router — lazy page loads, prefetch on hover,
+   flat wipe transition between pages (no full reloads).
+   ============================================================ */
+const PAGE_CACHE = new Map();
+let _navving = false;
+
+function _pageFileOf(u){
+  let p = u.pathname.replace(/\/+$/,'').split('/').pop() || 'index.html';
+  if(!/\.html$/.test(p)) p += '.html';
+  return p;
+}
+function _cleanPathOf(u){
+  const f = _pageFileOf(u);
+  return (f==='index.html' ? '/' : '/'+f.replace(/\.html$/,'')) + u.search;
+}
+function _routable(a){
+  const href = a.getAttribute('href') || '';
+  if(!href || href.startsWith('#') || a.target || a.hasAttribute('download')) return null;
+  let u; try{ u = new URL(href, location.href); }catch(e){ return null; }
+  if(u.origin !== location.origin) return null;
+  /* only top-level pages; let v1-v5 archive dirs load normally */
+  if(u.pathname.split('/').filter(Boolean).length > 1) return null;
+  return u;
+}
+function _fetchPage(file){
+  if(PAGE_CACHE.has(file)) return PAGE_CACHE.get(file);
+  const p = fetch(file, {credentials:'same-origin'}).then(r=>{
+    if(!r.ok) throw new Error(r.status);
+    return r.text();
+  });
+  p.catch(()=>PAGE_CACHE.delete(file));
+  PAGE_CACHE.set(file, p);
+  return p;
+}
+
+/* wipe overlay: flat panel, thin accent leading edge, covers content area */
+let _wipeEl = null;
+function _wipe(){
+  if(_wipeEl) return _wipeEl;
+  _wipeEl = document.createElement('div');
+  _wipeEl.className = 'wipe';
+  _wipeEl.innerHTML = '<span class="wipe-tag">ロード中 · LOADING</span>';
+  document.body.appendChild(_wipeEl);
+  return _wipeEl;
+}
+function _wipeTo(el, cls){
+  return new Promise(res=>{
+    let done = false;
+    const fin = e=>{
+      if(e && (e.target!==el || e.propertyName!=='transform')) return;
+      if(done) return; done = true; el.removeEventListener('transitionend', fin); res();
+    };
+    el.addEventListener('transitionend', fin);
+    _rawSetTimeout(fin, 450); /* safety net */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.classList.remove('in','out');
+      el.classList.add(cls);
+    }));
+  });
+}
+
+async function navigateTo(u, push=true){
+  if(_navving) return;
+  const file = _pageFileOf(u);
+  _navving = true;
+  const w = _wipe();
+  w.classList.remove('in','out');
+  try{
+    const [html] = await Promise.all([_fetchPage(file), _wipeTo(w,'in')]);
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const next = doc.querySelector('.page');
+    if(!next){ location.href = u.href; return; }
+
+    clearPageTimers();
+    if(push) history.pushState({mizo:1}, '', _cleanPathOf(u));
+    document.title = doc.title || document.title;
+    document.body.dataset.page = doc.body.dataset.page || '';
+
+    /* swap content under the wipe; keep the mounted topnav */
+    const pageEl = document.querySelector('.page');
+    [...pageEl.children].forEach(c=>{ if(!c.classList.contains('topnav')) c.remove(); });
+    let i = 0;
+    [...next.children].forEach(c=>{
+      const n = document.importNode(c, true);
+      n.classList.add('pg-enter');
+      n.style.setProperty('--stag', i++);
+      pageEl.appendChild(n);
+    });
+    fillFooter();
+
+    /* sidebar active state */
+    const active = ACTIVE_PAGE[document.body.dataset.page] || '';
+    document.querySelectorAll('.sb-nav .sb-btn').forEach((el,idx)=>
+      el.classList.toggle('on', NAV[idx] && NAV[idx].key===active));
+
+    window.scrollTo(0,0);
+
+    /* run the page's inline scripts (app.js itself is already live) */
+    doc.querySelectorAll('script').forEach(s=>{
+      if(s.src) return;
+      try{ new Function(s.textContent).call(window); }
+      catch(e){ console.error('[router] page script failed:', e); }
+    });
+
+    await _wipeTo(w,'out');
+    w.classList.remove('in','out');
+  }catch(e){
+    console.error('[router] navigation failed, falling back:', e);
+    location.href = u.href;
+  }finally{
+    _navving = false;
+  }
+}
+
+document.addEventListener('click', e=>{
+  if(e.defaultPrevented || e.button!==0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest('a');
+  if(!a) return;
+  const u = _routable(a);
+  if(!u) return;
+  e.preventDefault();
+  if(_pageFileOf(u)===_pageFileOf(new URL(location.href)) && u.search===location.search){
+    window.scrollTo({top:0, behavior:'smooth'});
+    return;
+  }
+  navigateTo(u);
+});
+
+/* prefetch on hover — pages are ready before the click lands */
+document.addEventListener('pointerover', e=>{
+  const a = e.target.closest('a');
+  if(!a) return;
+  const u = _routable(a);
+  if(u) _fetchPage(_pageFileOf(u));
+}, {passive:true});
+
+addEventListener('popstate', ()=>navigateTo(new URL(location.href), false));
+history.replaceState({mizo:1}, '', location.href);

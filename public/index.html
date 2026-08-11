@@ -69,7 +69,6 @@
         <svg class="circles" viewBox="0 0 100 100">
           <circle class="ring" cx="50" cy="50" r="6"/><circle class="ring" cx="50" cy="50" r="13"/><circle class="ring" cx="50" cy="50" r="20"/>
           <circle class="ring" cx="50" cy="50" r="27"/><circle class="ring" cx="50" cy="50" r="34"/><circle class="ring" cx="50" cy="50" r="41"/><circle class="ring" cx="50" cy="50" r="48"/>
-          <circle class="ping" cx="50" cy="50" r="6"/>
         </svg>
         <span class="vtxt">レネサンス</span>
       </div>
@@ -130,8 +129,11 @@ const COLL = {
 let curChain = 'ROBINHOOD';
 function renderTabs(){
   document.getElementById('chainTabs').innerHTML = Object.keys(COLL).map(c=>
-    `<button class="ctab${c===curChain?' on':''}" onclick="setChain('${c}')">${c}</button>`).join('');
+    `<button class="ctab${c===curChain?' on':''}" data-chain="${c}">${c}</button>`).join('');
 }
+document.getElementById('chainTabs').addEventListener('click', e=>{
+  const b = e.target.closest('.ctab'); if(b) setChain(b.dataset.chain);
+});
 function setChain(c){ curChain = c; renderTabs(); renderCards(); }
 function renderCards(){
   document.getElementById('cards').innerHTML = COLL[curChain].map(([name,tkr,age,mc,kanji,dir],i)=>
