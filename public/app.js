@@ -44,7 +44,7 @@ const CHAINS = [
 ];
 const chainBy = s => CHAINS.find(c=>c.slug===s) || CHAINS[0];
 
-const HUES = ['#c9a227','#5a7d4a','#7d4a4a','#4a5a7d','#6b6b6b','#7d6b4a'];
+const HUES = ['#c9a227','#766c63','#7d4a4a','#4a5a7d','#6b6b6b','#7d6b4a'];
 
 /* name, ticker, chain slug, grade, state, price, mcap, age, hue idx, glyph */
 const TOKENS = [
