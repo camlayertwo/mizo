@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mizo — chain launchpad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800;900&family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="stylesheet" href="app.css"/>
+</head>
+<body data-page="chain" data-chain="hood">
+
+<div class="page">
+
+  <div class="lp">
+    <aside class="lp-side" id="lpSide"></aside>
+
+    <main class="lp-main">
+      <h2 class="lp-h">The Wall<span class="zz"></span></h2>
+      <div class="wall" id="wall"></div>
+
+      <h2 class="lp-h">Explore<span class="zz"></span></h2>
+      <div class="lp-filter">
+        <button class="fchip on">◎ Movers</button>
+        <button class="fchip">✦ Mayhem</button>
+        <button class="fchip">◉ New</button>
+        <button class="fchip">((·)) Live</button>
+        <button class="fchip">◷ Oldest</button>
+        <button class="fchip">⇅ Last trade</button>
+        <button class="fchip">⊕ More</button>
+        <div class="lp-view" id="lpView">
+          <button class="on" data-view="grid">▦ Grid</button>
+          <button data-view="table">☰ Table</button>
+        </div>
+        <button class="lp-funnel" aria-label="Filters"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg></button>
+      </div>
+
+      <div class="lp-grid" id="lpGrid"></div>
+      <div id="lpTableWrap" style="display:none">
+        <table class="lp-table">
+          <thead><tr><th style="width:34px">#</th><th>Token</th><th>Ticker</th><th>Holders</th><th>Mcap</th><th></th></tr></thead>
+          <tbody id="lpRows"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <footer class="ft"></footer>
+</div>
+
+<script src="app.js"></script>
+<script>
+(function(){
+  const slug = new URLSearchParams(location.search).get('c') || 'hood';
+  const chain = chainBy(slug);
+  document.body.dataset.chain = chain.slug;
+  document.title = 'Mizo — ' + chain.name + ' launchpad';
+
+  /* ---- inner sidebar ---- */
+  const ICONS = {
+    discover:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+    docs:'<path d="M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7"/>',
+    swap:'<path d="M7 4v13M7 4 4 7m3-3 3 3m7 13V7m0 13 3-3m-3 3-3-3"/>',
+    portfolio:'<path d="M4 8h16v12H4zM8 8V5h8v3"/><path d="M4 13h16"/>',
+    analytics:'<path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/>',
+    bridge:'<path d="M3 17c0-5 4-9 9-9s9 4 9 9M3 17h3m12 0h3M8 17h8"/>',
+  };
+  const SIDE = [
+    ['Discover', 'chain.html?c='+chain.slug, 'discover', true],
+    ['Docs', 'grading.html', 'docs'],
+    ['Swap', 'swap.html', 'swap'],
+    ['Portfolio', 'portfolio.html', 'portfolio'],
+    ['Analytics', '#analytics', 'analytics'],
+    ['Bridge', 'bridge.html', 'bridge', false, 'NEW'],
+  ];
+  document.getElementById('lpSide').innerHTML =
+    SIDE.map(([label,href,ic,on,badge])=>
+      `<a class="lp-item${on?' on':''}" href="${href}">
+        <svg viewBox="0 0 24 24">${ICONS[ic]}</svg>${label}${badge?`<span class="new">${badge}</span>`:''}
+      </a>`).join('')+
+    `<a class="lp-create" href="launch.html?c=${chain.slug}">Create token</a>`;
+
+  /* ---- placeholder token pool (names from the Figma comp) ---- */
+  const POOL = [
+    ['Mini Cate','MIC','2M','$73K','猫',0],
+    ['The Bear Flop','TBF','5H','$9.8K','熊',1],
+    ['Funky Gumball','GUMBALL','5H','$9.8K','緑',2],
+    ['Chrome','CHR','5H','$9.8K','鉻',3],
+    ['Pons','PONS','5H','$9.8K','P',4],
+    ['Jesus Loves You','JLY','5H','$9.8K','愛',5],
+    ['Ducktator','DUKT','5H','$9.8K','鴨',0],
+    ['Capi Bomba','CAPI','5H','$9.8K','水',1],
+    ['Robin Hood','HOOD','5H','$9.8K','弓',2],
+    ['Baron Cat','BARON','5H','$9.8K','爵',3],
+    ['Kospi Moon','KOSPI','1H','$41K','月',4],
+    ['Polar Max','POLAR','9H','$18K','極',5],
+  ];
+  /* offset the pool per chain so every launchpad reads differently */
+  const off = CHAIN_TAB_ORDER.indexOf(chain.slug);
+  const rot = (list,n)=>list.slice(n%list.length).concat(list.slice(0,n%list.length));
+  const feed = rot(POOL, off*3).concat(rot(POOL, off*3+7)).slice(0,18);
+
+  const imgBg = h => `background:linear-gradient(150deg,${HUES[h%6]}66,#101012 82%)`;
+  const buyHref = t => `record.html?t=${encodeURIComponent(t[1])}&c=${chain.slug}`;
+
+  /* ---- the wall ---- */
+  const wallList = rot(POOL, off*5).concat(rot(POOL, off*5+4)).slice(0,14);
+  document.getElementById('wall').innerHTML = wallList.map((t,i)=>
+    `<a class="wall-t${i===2||i===9?' hot':''}" href="${buyHref(t)}" title="${t[0]}" style="${imgBg(t[5])}">
+      <span class="kanji">${t[4]}</span>
+    </a>`).join('');
+
+  /* ---- grid ---- */
+  document.getElementById('lpGrid').innerHTML = feed.map(t=>
+    `<a class="lp-card" href="${buyHref(t)}">
+      <div class="im" style="${imgBg(t[5])}">
+        <span class="kanji">${t[4]}</span><span class="mint">MINT</span>
+        <span class="nm">${t[0]}</span>
+      </div>
+      <div class="ft-row"><span class="tk">$${t[1]}</span><span class="hd">⚘ ${t[2]}</span><span class="pr">${t[3]}</span></div>
+    </a>`).join('');
+
+  /* ---- table ---- */
+  document.getElementById('lpRows').innerHTML = feed.map((t,i)=>
+    `<tr><td>${String(i+1).padStart(2,'0')}</td>
+      <td><span class="tn"><i style="${imgBg(t[5])}">${t[4]}</i>${t[0]}</span></td>
+      <td>$${t[1]}</td><td class="hd">⚘ ${t[2]}</td><td class="pr">${t[3]}</td>
+      <td><a class="go" href="${buyHref(t)}">Trade →</a></td></tr>`).join('');
+
+  /* ---- grid/table toggle + filter chips (prototype: reorder feed) ---- */
+  const view = document.getElementById('lpView');
+  view.addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    view.querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b));
+    document.getElementById('lpGrid').style.display = b.dataset.view==='grid' ? '' : 'none';
+    document.getElementById('lpTableWrap').style.display = b.dataset.view==='table' ? '' : 'none';
+  });
+  document.querySelectorAll('.lp-filter .fchip').forEach((c,i)=>c.addEventListener('click', ()=>{
+    document.querySelectorAll('.lp-filter .fchip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');
+    const g = document.getElementById('lpGrid');
+    for(let k=0;k<(i*3)%g.children.length;k++) g.appendChild(g.firstElementChild);
+  }));
+})();
+</script>
+</body>
+</html>

@@ -41,7 +41,7 @@ const FOOT_NAV = [
 /* which nav item lights up for each page */
 const ACTIVE_PAGE = {
   home:'home', swap:'swap', private:'swap', bridge:'bridge',
-  discover:'explore', record:'explore', store:'explore', cutout:'explore', collection:'explore',
+  discover:'explore', chain:'explore', record:'explore', store:'explore', cutout:'explore', collection:'explore',
   launch:'launch', portfolio:'portfolio', grading:'docs',
 };
 
@@ -152,18 +152,12 @@ function mountProduct(){
     if(!manuallySet) setRail(e.matches);
   });
 
-  /* top nav */
+  /* top nav — content depends on page type, see renderTopnav() */
   const top = document.createElement('div');
   top.className = 'topnav';
-  top.innerHTML =
-    '<div class="tick metas"><a class="tick-label" href="#metas"><span class="ast">✳</span> Metas</a>'+
-    '<div class="tick-scroll"><div class="tick-track" id="metasTrack"></div></div></div>'+
-    '<div class="tick chains"><a class="tick-label" href="#chains">⇄ Chains</a>'+
-    '<div class="tick-scroll"><div class="tick-track" id="chainsTrack"></div></div></div>'+
-    '<div class="auth"><button class="btn btn-ghost" onclick="openWallet()">Log in</button>'+
-    '<button class="btn btn-solid" onclick="openWallet()">Sign up</button></div>';
   const pageEl = document.querySelector('.page');
   if(pageEl) pageEl.prepend(top);
+  renderTopnav();
 
   /* wallet modal */
   const modal = document.createElement('div');
@@ -183,11 +177,41 @@ function mountProduct(){
   /* footer */
   fillFooter();
 
-  /* tickers — auto-scroll, drag to scrub, wheel/trackpad scroll */
-  const ticker = (el, rows)=>{
+}
+
+/* ---------- topnav: ticker bar everywhere, chain tabs on chain.html ---------- */
+const CHAIN_TAB_ORDER = ['hood','base','eth','ton','sol','bnb'];
+let _tickerStops = [];
+function renderTopnav(){
+  const top = document.querySelector('.topnav'); if(!top) return;
+  _tickerStops.forEach(f=>f&&f()); _tickerStops = [];
+  const authHTML =
+    '<div class="auth"><button class="btn btn-ghost" onclick="openWallet()">Log in</button>'+
+    '<button class="btn btn-solid" onclick="openWallet()">Sign up</button></div>';
+  if(document.body.dataset.page === 'chain'){
+    const cur = new URLSearchParams(location.search).get('c') || 'hood';
+    top.classList.add('cb');
+    top.innerHTML =
+      '<a class="cb-back" href="discover.html" aria-label="Back to chain picker">←</a>'+
+      '<nav class="cb-tabs">'+CHAIN_TAB_ORDER.map(s=>
+        `<a class="cb-tab${s===cur?' on':''}" href="chain.html?c=${s}">${chainBy(s).name}</a>`).join('')+
+      '</nav>'+authHTML;
+  }else{
+    top.classList.remove('cb');
+    top.innerHTML =
+      '<div class="tick metas"><a class="tick-label" href="#metas"><span class="ast">✳</span> Metas</a>'+
+      '<div class="tick-scroll"><div class="tick-track" id="metasTrack"></div></div></div>'+
+      '<div class="tick chains"><a class="tick-label" href="#chains">⇄ Chains</a>'+
+      '<div class="tick-scroll"><div class="tick-track" id="chainsTrack"></div></div></div>'+authHTML;
+    _tickerStops.push(ticker('metasTrack', METAS), ticker('chainsTrack', CHAINS6));
+  }
+}
+
+/* tickers — auto-scroll, drag to scrub, wheel/trackpad scroll; returns stop() */
+function ticker(el, rows){
     const one = rows.map(([n,v,dir]) =>
       `<a class="tick-item" href="#"><b>${n}</b> ${v} <span class="${dir>0?'u':'d'}">${dir>0?'▲':'▼'}</span></a>`).join('');
-    const t = document.getElementById(el); if(!t) return;
+    const t = document.getElementById(el); if(!t) return null;
     t.innerHTML = one + one;
 
     const scroll = t.parentElement;
@@ -199,7 +223,9 @@ function mountProduct(){
     measure();
     addEventListener('resize', measure);
 
+    let alive = true;
     const step = now=>{
+      if(!alive) return;
       const dt = (now - last) / 1000; last = now;
       if(!dragging && !hovering && half > 0) offset += SPEED * dt;
       if(half > 0) offset = ((offset % half) + half) % half;
@@ -229,9 +255,7 @@ function mountProduct(){
       const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       if(d){ offset += d; e.preventDefault(); }
     }, {passive:false});
-  };
-  ticker('metasTrack', METAS);
-  ticker('chainsTrack', CHAINS6);
+    return ()=>{ alive = false; removeEventListener('resize', measure); };
 }
 
 function fillFooter(){
@@ -389,6 +413,9 @@ async function navigateTo(u, push=true){
     const active = ACTIVE_PAGE[document.body.dataset.page] || '';
     document.querySelectorAll('.sb-nav .sb-btn').forEach((el,idx)=>
       el.classList.toggle('on', NAV[idx] && NAV[idx].key===active));
+
+    /* topnav variant may change (tickers vs chain tabs) */
+    renderTopnav();
 
     window.scrollTo(0,0);
 
