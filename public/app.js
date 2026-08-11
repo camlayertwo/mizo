@@ -98,12 +98,12 @@ function renderGrid(sel, list, extraFn){
 
 /* ---------- ticker data ---------- */
 const METAS = [
-  ['CAT','$455.3M',1],['CHARACTER','$1.95B',-1],['DOG','$455.3M',1],['AI','$812.4M',1],
-  ['FROG','$203.1M',-1],['RETRO','$96.7M',1],['ANIME','$154.9M',-1],['FOOD','$61.2M',1],
+  ['Cat','$455.3M',1],['Character','$1.95B',-1],['Dog','$455.3M',1],['AI','$812.4M',1],
+  ['Frog','$203.1M',-1],['Retro','$96.7M',1],['Anime','$154.9M',-1],['Food','$61.2M',1],
 ];
 const CHAINS6 = [
-  ['ROBINHOOD','$455.3M',1],['TON','$1.95B',-1],['SOLANA','$455.3M',1],
-  ['ETHEREUM','$2.31B',1],['BASE','$688.0M',-1],['BSC','$402.6M',1],
+  ['Robinhood','$455.3M',1],['Ton','$1.95B',-1],['Solana','$455.3M',1],
+  ['Ethereum','$2.31B',1],['Base','$688.0M',-1],['BSC','$402.6M',1],
 ];
 
 /* ---------- shell mount ---------- */
@@ -186,8 +186,8 @@ function renderTopnav(){
   const top = document.querySelector('.topnav'); if(!top) return;
   _tickerStops.forEach(f=>f&&f()); _tickerStops = [];
   const authHTML =
-    '<div class="auth"><button class="btn btn-ghost" onclick="openWallet()">Log in</button>'+
-    '<button class="btn btn-solid" onclick="openWallet()">Sign up</button></div>';
+    '<div class="auth"><button class="btn btn-ghost" onclick="openWallet()">Log In</button>'+
+    '<button class="btn btn-solid" onclick="openWallet()">Sign Up</button></div>';
   if(document.body.dataset.page === 'chain'){
     const cur = new URLSearchParams(location.search).get('c') || 'hood';
     top.classList.add('cb');
@@ -201,7 +201,7 @@ function renderTopnav(){
     top.innerHTML =
       '<div class="tick metas"><a class="tick-label" href="#metas"><span class="ast">✳</span> Metas</a>'+
       '<div class="tick-scroll"><div class="tick-track" id="metasTrack"></div></div></div>'+
-      '<div class="tick chains"><a class="tick-label" href="#chains">⇄ Chains</a>'+
+      '<div class="tick chains"><a class="tick-label" href="#chains"><svg class="lnk" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg> Chains</a>'+
       '<div class="tick-scroll"><div class="tick-track" id="chainsTrack"></div></div></div>'+authHTML;
     _tickerStops.push(ticker('metasTrack', METAS), ticker('chainsTrack', CHAINS6));
   }
@@ -209,8 +209,9 @@ function renderTopnav(){
 
 /* tickers — auto-scroll, drag to scrub, wheel/trackpad scroll; returns stop() */
 function ticker(el, rows){
+    const caret = dir => `<svg class="crt ${dir>0?'u':'d'}" viewBox="0 0 8 4" aria-hidden="true"><path d="${dir>0?'M0 4 4 0l4 4':'M0 0 4 4l4-4'}"/></svg>`;
     const one = rows.map(([n,v,dir]) =>
-      `<a class="tick-item" href="#"><b>${n}</b> ${v} <span class="${dir>0?'u':'d'}">${dir>0?'▲':'▼'}</span></a>`).join('');
+      `<a class="tick-item" href="#"><b>${n}</b><span class="val">${v}</span>${caret(dir)}</a>`).join('');
     const t = document.getElementById(el); if(!t) return null;
     t.innerHTML = one + one;
 
