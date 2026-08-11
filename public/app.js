@@ -192,9 +192,10 @@ function renderTopnav(){
     const cur = new URLSearchParams(location.search).get('c') || 'hood';
     top.classList.add('cb');
     top.innerHTML =
-      '<a class="cb-back" href="discover.html" aria-label="Back to chain picker">←</a>'+
-      '<nav class="cb-tabs">'+CHAIN_TAB_ORDER.map(s=>
-        `<a class="cb-tab${s===cur?' on':''}" href="chain.html?c=${s}">${chainBy(s).name}</a>`).join('')+
+      '<a class="cb-back" href="discover.html" aria-label="Back to chain picker">'+
+      '<svg viewBox="0 0 17 16" aria-hidden="true"><path d="M8.5 1 1.5 8l7 7M1.5 8H16"/></svg></a>'+
+      '<nav class="cb-tabs">'+CHAIN_TAB_ORDER.map((s,i)=>
+        `<a class="cb-tab${s===cur?' on':''}" style="z-index:${s===cur?9:8-i}" href="chain.html?c=${s}">${chainBy(s).name}</a>`).join('')+
       '</nav>'+authHTML;
   }else{
     top.classList.remove('cb');

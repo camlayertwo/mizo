@@ -4,6 +4,8 @@
    with the components every inner page needs.
    ============================================================ */
 
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@900&display=swap');
+
 @font-face{font-family:"Switzer";src:url("https://cdn.fontshare.com/wf/5SZVFDB7V52TI6ULVC6J3WQZQCIZVDV5/ODYPSTCUDMKSTYIPTV4CLQ7URIK7XYBJ/YS3VPNVO4B3TOJMEXDGFZQ4TLZGGSRZC.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
 @font-face{font-family:"Proto Mono";src:url("fonts/ProtoMono-Regular.woff2") format("woff2"),url("fonts/ProtoMono-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
 
@@ -520,21 +522,34 @@ body[data-page=chain]::before{content:'';position:fixed;left:0;top:0;bottom:0;wi
   background:url("art/city-comic.png") left center/cover no-repeat;opacity:.12;
   -webkit-mask-image:linear-gradient(90deg,#000 30%,transparent);mask-image:linear-gradient(90deg,#000 30%,transparent)}
 
-/* --- topnav variant: back arrow + angled chain tabs (replaces tickers) --- */
+/* --- topnav variant: back arrow + paper-folder chain tabs (Figma 141:78660) ---
+   Tab silhouette: rounded top-left, slanted right edge, 199x54, -24px overlap.
+   Leftmost tab stacks on top; active tab raised above all. */
 .topnav.cb{display:flex;gap:12px;align-items:center}
-.cb-back{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--ink-dim);font-size:18px}
-.cb-back:hover{color:var(--ink);border-color:var(--line2)}
-.cb-tabs{display:flex;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;padding-right:14px}
-.cb-tabs::-webkit-scrollbar{display:none}
-.cb-tab{flex:none;display:flex;align-items:center;height:44px;padding:0 34px;margin-left:-14px;
-  font-family:var(--font-mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);
-  background:var(--panel);border:1px solid var(--line);border-right:0;
-  clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);white-space:nowrap}
-.cb-tab:first-child{margin-left:0;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%);border-radius:4px 0 0 4px}
-.cb-tab:hover{color:var(--ink-dim)}
-.cb-tab.on{background:var(--panel2);color:var(--ink)}
-.topnav.cb .auth{align-self:center}
+.cb-back{width:31px;height:54px;flex:none;display:flex;align-items:center;justify-content:center;
+  background:none;border:0;color:rgba(195,195,195,.4);font-size:0}
+.cb-back svg{width:17px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
+.cb-back:hover{color:#c3c3c3}
+.cb-tabs{display:flex;flex:1;min-width:0;height:54px}
+.cb-tab{position:relative;width:199px;height:54px;flex:none;margin-left:-24px;
+  display:flex;align-items:center;justify-content:center;white-space:nowrap;
+  font-family:'Unbounded',var(--font-disp);font-weight:900;font-size:19px;letter-spacing:-.76px;text-transform:uppercase;
+  color:rgba(195,195,195,.4);filter:drop-shadow(0 4px 22px rgba(0,0,0,.7))}
+.cb-tab:first-child{margin-left:0}
+.cb-tab::before{content:'';position:absolute;inset:0;z-index:-1;background:#1f1f1f;
+  clip-path:path('M0 5C0 2.24 2.24 0 5 0L182.34 0C184.67 0 186.7 1.61 187.22 3.89L198.67 54L0 54L0 5Z')}
+.cb-tab:hover{color:rgba(195,195,195,.75)}
+.cb-tab.on{color:#c8cbba}
+.cb-tab.on::before{background:var(--tab-on,#303527)}
+body[data-chain=hood]{--tab-on:#303527}
+body[data-chain=base]{--tab-on:#2a3141}
+body[data-chain=eth]{--tab-on:#2e2e45}
+body[data-chain=ton]{--tab-on:#243544}
+body[data-chain=sol]{--tab-on:#322847}
+body[data-chain=bnb]{--tab-on:#3b3116}
+.topnav.cb .auth{align-self:center;gap:6px}
+@media(max-width:1439px){.cb-tab{width:170px;font-size:16px}
+  .cb-tab::before{clip-path:path('M0 5C0 2.24 2.24 0 5 0L155.5 0C157.8 0 159.8 1.61 160.4 3.89L169.7 54L0 54L0 5Z')}}
 
 /* --- launchpad layout: inner sidebar + main --- */
 .lp{display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;margin-top:14px}
