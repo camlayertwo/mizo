@@ -1,6 +1,6 @@
 /* ============================================================
-   MIZO v6 — shared design system
-   Extracted from the approved v6 home (2026-08-10) and extended
+   MIZO — shared design system
+   Extracted from the approved home and extended
    with the components every inner page needs.
    ============================================================ */
 
@@ -225,7 +225,7 @@ body.sb-expanded .sb-btn .tip{display:none}
 .wf-note{margin-top:14px;font-family:var(--font-mono);font-size:10px;color:var(--ink-mute);letter-spacing:.06em}
 
 /* ============================================================
-   INNER-PAGE COMPONENTS (v6 language)
+   INNER-PAGE COMPONENTS
    ============================================================ */
 
 /* page head */

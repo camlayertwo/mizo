@@ -1,21 +1,27 @@
-# Mizo — prototype wireframe
+# Mizo product prototype
 
-Greyscale, light-mode, mono-first wireframe for **Mizo** (multi-chain launchpad hub, formerly Noah.fun).
-Built to design *from*, not to ship. No real dev — static HTML/CSS/JS.
+Current interactive product prototype for Mizo, a multi-chain launchpad and trading hub.
 
-Vibe: tactile Japanese printmaking × blockchain. Hand-carved display (Yuji Syuku) for brand
-moments, mono (JetBrains Mono) for everything functional. Chain colour is represented as a
-hatch pattern + label, honouring brand rule 1 ("colour only ever means a chain") while staying greyscale.
+## Product routes
 
-## Screens (§20.3 prototype scope)
-- `index.html` — Hub home (hero, chain row, activity strip, cross-chain wall/feed)
-- `storefront.html` — Per-chain store (themed band, the Wall x12, the Bin) · `?c=hood|sol|base|bnb|ton|eth`
-- `record.html` — Record detail (obi, grade + "graded Xm ago", chart, curve, buy widget)
-- `launch.html` — Launch flow (chain picker → the record → cut & confirm, live obi preview)
-- `private.html` — Private swap / back room (public↔private toggle, bridge counter)
-- `collection.html` — Mizo's Collection (twelve slots, published criteria, share card)
+- `/` — home and collection overview
+- `/swap` — public and private swap flows
+- `/bridge` — cross-chain bridge flow
+- `/discover` — token and chain discovery
+- `/launch` — launch flow
+- `/portfolio` — wallet portfolio
+- `/grading` — grading and documentation
+- `/collection` — Mizo collection
+- `/record` — token detail
+- `/private` — private swap detail
+- `/storefront` — chain storefront
+- `/storefront-cutout` — storefront cutout state
 
-Core component: the **obi card** = one square cover + one vertical band (grade · store · state · price · age).
-Everything renders from a sample token list in `app.js`.
+## Structure
 
-Deploy: static — `cd public && vercel deploy --prod`.
+- `public/app.css` — shared product design system
+- `public/app.js` — shared navigation, rail, tickers, and wallet interactions
+- `public/art/` — current product artwork
+- `public/fonts/` — local type assets
+
+The project is a static HTML/CSS/JS prototype deployed from `public/` through Vercel.
