@@ -143,9 +143,12 @@ body.sb-expanded .sb-btn .tip{display:none}
 
 /* ============ HERO (home) ============ */
 .hero{display:grid;grid-template-columns:480px 1fr 220px;gap:10px;margin-bottom:12px;align-items:stretch}
-/* fill the first viewport: hero row tracks browser height (chrome above ≈110px + peek) */
+/* hero row tracks browser height but stays under half the viewport */
 @media(min-width:1101px){
-  .hero{height:max(520px,calc(100svh - 122px))}
+  .hero{height:max(430px,calc(50svh - 14px))}
+  /* verbs also respect height so four lines always fit the shorter panel */
+  .verb a{font-size:clamp(40px,min(5.2vw,12svh - 51px),72px)}
+  .verb .arw{font-size:clamp(30px,min(4vw,9svh - 38px),54px)}
 }
 .hero-char{border:1px solid var(--line);border-radius:4px;position:relative;min-height:520px;overflow:visible}
 .hero-char .char-bg{position:absolute;inset:0;border-radius:4px;overflow:hidden}
