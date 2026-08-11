@@ -143,11 +143,15 @@ body.sb-expanded .sb-btn .tip{display:none}
 
 /* ============ HERO (home) ============ */
 .hero{display:grid;grid-template-columns:480px 1fr 220px;gap:10px;margin-bottom:12px;align-items:stretch}
+/* fill the first viewport: hero row tracks browser height (chrome above ≈110px + peek) */
+@media(min-width:1101px){
+  .hero{height:max(520px,calc(100svh - 122px))}
+}
 .hero-char{border:1px solid var(--line);border-radius:4px;position:relative;min-height:520px;overflow:visible}
 .hero-char .char-bg{position:absolute;inset:0;border-radius:4px;overflow:hidden}
 .hero-char .char-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 100%}
 .hero-char .char-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,9,7,.35) 0%,rgba(10,9,7,0) 45%)}
-.hero-char .char-fig{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:142%;/* head top lands ~halfway up the MIZO wordmark */
+.hero-char .char-fig{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:calc(100% + 218px);/* fixed bleed: head top lands ~halfway up the MIZO wordmark at any hero height */
   display:flex;align-items:flex-end;justify-content:center;pointer-events:none;z-index:6}
 .hero-char .char-fig img{height:100%;width:auto;max-width:none;object-fit:contain;object-position:bottom;filter:drop-shadow(0 18px 28px rgba(0,0,0,.55))}
 .hero-main{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden}
