@@ -11,76 +11,56 @@
 <link rel="stylesheet" href="v6.css"/>
 </head>
 <body data-page="swap">
+<div class="page task-page">
+  <main class="trade-stage trade-stage-single">
+    <section class="trade-card" aria-label="Swap tokens">
+      <div class="trade-head">
+        <div class="trade-title"><span class="trade-icon">⇄</span><span>Swap</span></div>
+        <button class="icon-btn" aria-label="Swap settings">⚙</button>
+      </div>
 
-<div class="page">
+      <div class="trade-mode" role="tablist" aria-label="Swap mode">
+        <button class="on">Private swap<span>MEV protected</span></button>
+        <button>Simple swap<span>Fast · public</span></button>
+      </div>
 
-  <div class="phead">
-    <div>
-      <span class="kicker">✳ Any chain to any chain · one signature</span>
-      <h1>SWAP</h1>
+      <div class="asset-box">
+        <div class="asset-meta"><span>Sell</span><span>Balance 4.20 ETH</span></div>
+        <div class="asset-main"><span class="asset-amount">1.00</span><button class="asset-pick"><i class="coin eth">◆</i><span><b>ETH</b><small>Ethereum</small></span><em>⌄</em></button></div>
+      </div>
+      <button class="asset-flip" aria-label="Switch assets">⇅</button>
+      <div class="asset-box">
+        <div class="asset-meta"><span>Buy</span><span id="rcvSub">Balance 0 TON</span></div>
+        <div class="asset-main"><span class="asset-amount" id="rcvAmt">182.4</span><button class="asset-pick"><i class="coin ton">T</i><span><b>TON</b><small>TON</small></span><em>⌄</em></button></div>
+      </div>
+
+      <div class="trade-summary" id="swSummary">
+        <div><span>Rate</span><b>1 ETH ≈ 182.4 TON</b></div>
+        <div><span>Route</span><b id="swRoute">Best · 1 hop</b></div>
+        <div><span>Network cost</span><b>Paid from output</b></div>
+      </div>
+      <div id="swCta"><button class="btn btn-accent block">Review swap</button></div>
+    </section>
+    <p class="trade-footnote">Non-custodial · every swap is signed in your wallet.</p>
+
+    <div class="prototype-states" aria-label="Prototype states">
+      <span>Preview state</span>
+      <button data-state="quote">Ready</button><button data-state="loading">Loading</button><button data-state="insufficient">Low balance</button><button data-state="unavailable">No route</button>
     </div>
-    <span class="jp">両</span>
-  </div>
-
-  <div class="statebar">
-    <span class="sl">state</span>
-    <button class="sb" data-state="quote">quote ready</button>
-    <button class="sb" data-state="loading">quote loading</button>
-    <button class="sb" data-state="insufficient">insufficient balance</button>
-    <button class="sb" data-state="unavailable">route unavailable</button>
-  </div>
-
-  <div class="grid" style="align-items:start;grid-template-columns:minmax(0,440px) 1fr;gap:12px">
-    <div class="stack">
-      <div class="swapleg">
-        <div class="top"><span>you pay</span><span>balance 4.20 ETH · Ethereum</span></div>
-        <div class="between"><span class="amt">1.00</span><button class="tokpick">ETH · ETHEREUM ▾</button></div>
-      </div>
-      <div class="leg-mid">⇅</div>
-      <div class="swapleg">
-        <div class="top"><span>you receive</span><span id="rcvSub">≈ 182.4 TON · TON</span></div>
-        <div class="between"><span class="amt" id="rcvAmt">182.4</span><button class="tokpick">TON · TON ▾</button></div>
-      </div>
-
-      <div class="route">
-        <div class="rr"><span>route</span><b id="swRoute">ETH → intent solver → TON · 1 hop</b></div>
-        <div class="rr"><span>rate</span><b>1 ETH ≈ 182.4 TON</b></div>
-        <div class="rr"><span>slippage</span><b>auto · 0.5%</b></div>
-        <div class="rr"><span>gas</span><b>gasless · paid from output</b></div>
-      </div>
-
-      <div id="swCta"><button class="btn btn-accent block">Review &amp; sign</button></div>
-    </div>
-
-    <div class="stack">
-      <div class="note"><b>Why one signature.</b> Cross-chain swap is intent-based: you sign what you want, a solver finds the route and covers gas from the output. No manual bridge, no second screen, no judging which bridge is real.</div>
-      <div class="panel pad">
-        <span class="kicker">also available</span>
-        <div class="grid g2" style="margin-top:12px;gap:10px">
-          <a class="panel pad" href="bridge.html" style="padding:15px"><b>Bridge →</b><p class="mono-sm muted" style="margin:7px 0 0">Move an asset across, keep it.</p></a>
-          <a class="panel pad" href="private.html" style="padding:15px"><b>Private swap →</b><p class="mono-sm muted" style="margin:7px 0 0">Gasless, MEV-shielded. The back room.</p></a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="ft"></footer>
+  </main>
 </div>
-
 <script src="v6.js"></script>
 <script>
   const R=document.getElementById('swRoute'), A=document.getElementById('rcvAmt'), S=document.getElementById('rcvSub'), CTA=document.getElementById('swCta');
   const V={
-    quote:()=>{ R.textContent='ETH → intent solver → TON · 1 hop'; A.textContent='182.4'; S.textContent='≈ 182.4 TON · TON';
-      CTA.innerHTML='<button class="btn btn-accent block">Review &amp; sign</button>'; },
-    loading:()=>{ R.innerHTML='finding best route <span class="blink">▮</span>'; A.textContent='···'; S.textContent='quoting…';
-      CTA.innerHTML='<button class="btn btn-accent block" style="opacity:.5">Fetching quote…</button>'; },
-    insufficient:()=>{ R.textContent='ETH → intent solver → TON · 1 hop'; A.textContent='182.4'; S.textContent='≈ 182.4 TON · TON';
-      CTA.innerHTML='<div class="banner warn" style="margin:0"><span class="bi">!</span><div>You need <b>1.00 ETH</b>, wallet holds <b>0.42</b>. <a href="bridge.html">Bridge in</a> or lower the amount.</div></div>'; },
-    unavailable:()=>{ R.textContent='no route found for this pair'; A.textContent='—'; S.textContent='route unavailable';
-      CTA.innerHTML='<div class="banner" style="margin:0"><span class="bi">◎</span><div>No solver route for this pair right now. Try a different output token or bridge first.</div></div>'; }
+    quote:()=>{R.textContent='Best · 1 hop';A.textContent='182.4';S.textContent='Balance 0 TON';CTA.innerHTML='<button class="btn btn-accent block">Review swap</button>';},
+    loading:()=>{R.innerHTML='Finding route <span class="blink">▮</span>';A.textContent='···';S.textContent='Quoting…';CTA.innerHTML='<button class="btn btn-accent block" disabled>Fetching quote…</button>';},
+    insufficient:()=>{R.textContent='Best · 1 hop';A.textContent='182.4';S.textContent='Balance 0 TON';CTA.innerHTML='<button class="btn btn-accent block" disabled>Insufficient ETH balance</button>';},
+    unavailable:()=>{R.textContent='No route available';A.textContent='—';S.textContent='Try another token';CTA.innerHTML='<button class="btn btn-accent block" disabled>Route unavailable</button>';}
   };
-  wireStatebar(V,'quote');
+  document.querySelectorAll('.prototype-states button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.prototype-states button').forEach(x=>x.classList.toggle('on',x===b));V[b.dataset.state]();}));
+  document.querySelector('.prototype-states button').click();
+  document.querySelectorAll('.trade-mode button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.trade-mode button').forEach(x=>x.classList.toggle('on',x===b));}));
 </script>
 </body>
 </html>

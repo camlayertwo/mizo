@@ -11,69 +11,57 @@
 <link rel="stylesheet" href="v6.css"/>
 </head>
 <body data-page="bridge">
+<div class="page task-page">
+  <main class="trade-stage">
+    <div class="bridge-layout">
+      <section class="trade-card" aria-label="Bridge assets">
+        <div class="trade-head">
+          <div class="trade-title"><span class="trade-icon">⌒</span><span>Bridge</span></div>
+          <button class="fee-chip">⚙ 0.5%</button>
+        </div>
 
-<div class="page">
+        <div class="asset-box">
+          <div class="asset-meta"><span>From</span><span>Balance 4.20 ETH</span></div>
+          <div class="asset-main"><span class="asset-amount">1.00</span><button class="asset-pick"><i class="coin eth">◆</i><span><b>ETH</b><small>Ethereum</small></span><em>⌄</em></button></div>
+        </div>
+        <button class="asset-flip" aria-label="Switch chains">⇅</button>
+        <div class="asset-box">
+          <div class="asset-meta"><span>To</span><span>≈ 0.99 ETH</span></div>
+          <div class="asset-main"><span class="asset-amount">0.99</span><button class="asset-pick"><i class="coin hood">M</i><span><b>ETH</b><small>Robinhood</small></span><em>⌄</em></button></div>
+        </div>
 
-  <div class="phead">
-    <div>
-      <span class="kicker">✳ The import counter · move an asset, keep it</span>
-      <h1>BRIDGE</h1>
-    </div>
-    <span class="jp">橋</span>
-  </div>
+        <label class="address-field"><span>Receiving wallet</span><input placeholder="0x… destination on Robinhood"/></label>
+        <label class="check-row"><input type="checkbox"/> Use connected wallet address</label>
+        <div id="brCta"><button class="btn btn-accent block">Review bridge</button></div>
+      </section>
 
-  <div class="statebar">
-    <span class="sl">state</span>
-    <button class="sb" data-state="quoting">quoting</button>
-    <button class="sb" data-state="flight">in flight</button>
-    <button class="sb" data-state="complete">complete</button>
-    <button class="sb" data-state="stuck">stuck</button>
-  </div>
-
-  <div class="grid" style="align-items:start;grid-template-columns:minmax(0,440px) 1fr;gap:12px">
-    <div class="stack">
-      <div class="swapleg">
-        <div class="top"><span>move in</span><span>balance 4.20 ETH · Ethereum</span></div>
-        <div class="between"><span class="amt">1.00</span><button class="tokpick">ETH · ETHEREUM ▾</button></div>
-      </div>
-      <div class="leg-mid">⇄</div>
-      <div class="swapleg">
-        <div class="top"><span>arrives on</span><span>your Solana address</span></div>
-        <div class="between"><span class="amt">≈ 0.99</span><button class="tokpick">ETH · SOLANA ▾</button></div>
-      </div>
-
-      <div class="route" id="brInfo">
-        <div class="rr"><span>ETA</span><b>~40 seconds</b></div>
-        <div class="rr"><span>fee</span><b>0.1% · 0.001 ETH</b></div>
-        <div class="rr"><span>protection</span><b>one signature · MEV-shielded</b></div>
-      </div>
-
-      <div id="brCta"><button class="btn btn-accent block">Review &amp; sign</button></div>
+      <aside class="route-panel" id="brSide">
+        <div class="route-head"><b>Route</b><span><button class="on">Best</button><button>Fastest</button></span></div>
+        <div class="route-steps">
+          <div class="on"><i>1</i><span><b>Connect wallet</b><small>Link a wallet to unlock live quotes</small></span></div>
+          <div><i>2</i><span><b>Enter amount</b><small>Choose the asset and destination chain</small></span></div>
+          <div><i>3</i><span><b>Review &amp; bridge</b><small>Confirm the best route in one signature</small></span></div>
+        </div>
+      </aside>
     </div>
 
-    <div class="stack" id="brSide">
-      <div class="note"><b>Bridge then buy, in one intent.</b> When a token detail shows you can't pay in that chain's currency, the same bridge fires inline — route, fee and ETA shown once, one signature, and you hold the token. Never two screens and a guess about which bridge is real.</div>
+    <div class="prototype-states" aria-label="Prototype states">
+      <span>Preview state</span>
+      <button data-state="quoting">Ready</button><button data-state="flight">In flight</button><button data-state="complete">Complete</button><button data-state="stuck">Delayed</button>
     </div>
-  </div>
-
-  <footer class="ft"></footer>
+  </main>
 </div>
-
 <script src="v6.js"></script>
 <script>
-  const CTA=document.getElementById('brCta'), SIDE=document.getElementById('brSide'), INFO=document.getElementById('brInfo');
-  const baseSide=SIDE.innerHTML;
+  const CTA=document.getElementById('brCta'), SIDE=document.getElementById('brSide'), base=SIDE.innerHTML;
   const V={
-    quoting:()=>{ INFO.querySelector('b').innerHTML='calculating <span class="blink">▮</span>';
-      CTA.innerHTML='<button class="btn btn-accent block">Review &amp; sign</button>'; SIDE.innerHTML=baseSide; },
-    flight:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="spin"></div><b>Bridging 1.00 ETH → Solana</b><span class="mono-sm muted">signed · solver routing · ~40s</span><div class="progress"><i style="inset:0 45% 0 0"></i></div></div>';
-      SIDE.innerHTML='<div class="banner"><span class="bi">◷</span><div><b>In flight.</b> You can leave this screen — the bridge completes in the background and lands in your wallet. Points accrue on settle.</div></div>'; },
-    complete:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="done">✓</div><b>0.99 ETH landed on Solana</b><span class="mono-sm muted">40s · fee 0.001 ETH · +12 points</span><button class="btn btn-accent sm" style="margin-top:6px">Buy on Solana →</button></div>';
-      SIDE.innerHTML='<div class="banner"><span class="bi">✓</span><div><b>Done.</b> Funds and attention stayed on-platform. Straight into the bin to spend them.</div></div>'; },
-    stuck:()=>{ CTA.innerHTML='<div class="txcard" style="margin:0"><div class="fail">!</div><b>Taking longer than usual</b><span class="mono-sm muted">source confirmed · awaiting destination · 4m</span><button class="btn btn-ghost sm" style="margin-top:6px">View on explorer →</button></div>';
-      SIDE.innerHTML='<div class="banner warn"><span class="bi">!</span><div><b>Stuck, not lost.</b> Source chain confirmed, destination is slow. Funds are recoverable — status stays live and a support path is one tap away.</div></div>'; }
+    quoting:()=>{CTA.innerHTML='<button class="btn btn-accent block">Review bridge</button>';SIDE.innerHTML=base;},
+    flight:()=>{CTA.innerHTML='<button class="btn btn-accent block" disabled>Bridge in progress · 40s</button>';SIDE.innerHTML='<div class="route-head"><b>Route status</b><span class="status-live">Live</span></div><div class="route-progress"><div class="spin"></div><b>Moving 1.00 ETH</b><small>Ethereum → Robinhood</small><div class="progress"><i style="inset:0 42% 0 0"></i></div><small>Signed · solver routing</small></div>';},
+    complete:()=>{CTA.innerHTML='<button class="btn btn-accent block">Bridge again</button>';SIDE.innerHTML='<div class="route-head"><b>Route status</b><span class="status-live">Done</span></div><div class="route-progress"><div class="done">✓</div><b>0.99 ETH arrived</b><small>Ethereum → Robinhood · 40s</small><button class="btn btn-ghost sm">View in portfolio</button></div>';},
+    stuck:()=>{CTA.innerHTML='<button class="btn btn-ghost block">View on explorer</button>';SIDE.innerHTML='<div class="route-head"><b>Route status</b><span class="status-warn">Delayed</span></div><div class="route-progress"><div class="fail">!</div><b>Taking longer than usual</b><small>Source confirmed · destination pending</small><p>Funds are safe. This status updates automatically.</p></div>';}
   };
-  wireStatebar(V,'quoting');
+  document.querySelectorAll('.prototype-states button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.prototype-states button').forEach(x=>x.classList.toggle('on',x===b));V[b.dataset.state]();}));
+  document.querySelector('.prototype-states button').click();
 </script>
 </body>
 </html>
