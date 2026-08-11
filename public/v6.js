@@ -110,7 +110,35 @@ function mountV6(){
       </a>`).join('')+'</nav>'+
     '<div class="sb-foot">'+V6FOOT.map(n=>
       `<button class="sb-btn"><svg viewBox="0 0 24 24">${n.svg}</svg><span class="lbl">${n.label}</span><span class="tip">${n.label}</span></button>`).join('')+'</div>';
+  const railToggle = document.createElement('button');
+  railToggle.className = 'sb-toggle';
+  railToggle.type = 'button';
+  railToggle.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>';
+  aside.appendChild(railToggle);
   document.body.prepend(aside);
+
+  /* Fresh visits follow the viewport: collapsed through 2000px, expanded above it.
+     A deliberate toggle is kept for the rest of the tab session across navigation. */
+  const wideRail = matchMedia('(min-width:2001px)');
+  let savedRail = null;
+  try { savedRail = sessionStorage.getItem('mizo-rail-expanded'); } catch(e) {}
+  const setRail = expanded => {
+    document.body.classList.toggle('sb-expanded', expanded);
+    railToggle.setAttribute('aria-expanded', String(expanded));
+    railToggle.setAttribute('aria-label', expanded ? 'Collapse navigation' : 'Expand navigation');
+    railToggle.title = expanded ? 'Collapse navigation' : 'Expand navigation';
+  };
+  setRail(savedRail === null ? wideRail.matches : savedRail === '1');
+  railToggle.addEventListener('click', () => {
+    const next = !document.body.classList.contains('sb-expanded');
+    setRail(next);
+    try { sessionStorage.setItem('mizo-rail-expanded', next ? '1' : '0'); } catch(e) {}
+  });
+  wideRail.addEventListener('change', e => {
+    let manuallySet = false;
+    try { manuallySet = sessionStorage.getItem('mizo-rail-expanded') !== null; } catch(err) {}
+    if(!manuallySet) setRail(e.matches);
+  });
 
   /* top nav */
   const top = document.createElement('div');

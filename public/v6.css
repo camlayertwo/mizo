@@ -56,17 +56,27 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:200;op
   width:8px;height:8px;background:var(--panel2);border-left:1px solid var(--line2);border-bottom:1px solid var(--line2)}
 .sb-btn:hover .tip{opacity:1;transform:translateY(-50%) translateX(2px)}
 .sb-foot{margin-top:auto;display:flex;flex-direction:column;gap:6px;align-items:center;width:100%}
+.sb-toggle{position:absolute;top:50%;right:-13px;z-index:2;width:26px;height:38px;border:1px solid var(--line2);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;color:var(--ink-dim);background:#11110e;
+  opacity:0;transform:translateY(-50%) translateX(-3px);pointer-events:none;
+  transition:opacity .14s,transform .14s,color .14s,background .14s}
+.sidebar:hover .sb-toggle,.sb-toggle:focus-visible{opacity:1;transform:translateY(-50%);pointer-events:auto}
+.sb-toggle:hover{color:var(--ink);background:var(--panel2)}
+.sb-toggle svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;transition:transform .18s}
+body.sb-expanded .sb-toggle svg{transform:rotate(180deg)}
 
-/* wide screens: the rail expands and reveals inline labels */
-@media(min-width:1680px){
-  :root{--sidebar-w:188px}
-  .sidebar{align-items:stretch;padding:10px 10px 14px}
-  .sb-logo{margin-left:2px}
-  .sb-nav,.sb-foot{align-items:stretch}
-  .sb-btn{width:100%;justify-content:flex-start;gap:12px;padding:0 11px}
-  .sb-btn .lbl{display:block}
-  .sb-btn .tip{display:none}
+/* Expanded state: automatic above 2000px, or user-controlled at any desktop width. */
+body.sb-expanded{
+  --sidebar-w:188px;
 }
+body.sb-expanded .sidebar{
+  align-items:stretch;padding:10px 10px 14px;
+}
+body.sb-expanded .sb-logo{margin-left:2px}
+body.sb-expanded .sb-nav,body.sb-expanded .sb-foot{align-items:stretch}
+body.sb-expanded .sb-btn{width:100%;justify-content:flex-start;gap:12px;padding:0 11px}
+body.sb-expanded .sb-btn .lbl{display:block}
+body.sb-expanded .sb-btn .tip{display:none}
 
 /* ============ LAYOUT ============ */
 .page{margin-left:calc(var(--sidebar-w) + max(0px,(100vw - var(--sidebar-w) - 1560px)/2));padding:10px 14px 60px;max-width:1560px}
