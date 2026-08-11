@@ -183,11 +183,52 @@ function mountProduct(){
   /* footer */
   fillFooter();
 
-  /* tickers */
+  /* tickers — auto-scroll, drag to scrub, wheel/trackpad scroll */
   const ticker = (el, rows)=>{
     const one = rows.map(([n,v,dir]) =>
       `<a class="tick-item" href="#"><b>${n}</b> ${v} <span class="${dir>0?'u':'d'}">${dir>0?'▲':'▼'}</span></a>`).join('');
-    const t = document.getElementById(el); if(t) t.innerHTML = one + one;
+    const t = document.getElementById(el); if(!t) return;
+    t.innerHTML = one + one;
+
+    const scroll = t.parentElement;
+    const SPEED = 28; /* auto px/s, matches old 30s loop feel */
+    let offset = 0, half = 0, dragging = false, hovering = false;
+    let lastX = 0, moved = 0, last = performance.now();
+
+    const measure = ()=>{ half = t.scrollWidth / 2; };
+    measure();
+    addEventListener('resize', measure);
+
+    const step = now=>{
+      const dt = (now - last) / 1000; last = now;
+      if(!dragging && !hovering && half > 0) offset += SPEED * dt;
+      if(half > 0) offset = ((offset % half) + half) % half;
+      t.style.transform = `translateX(${-offset}px)`;
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+
+    scroll.addEventListener('mouseenter', ()=>{ hovering = true; });
+    scroll.addEventListener('mouseleave', ()=>{ hovering = false; });
+    scroll.addEventListener('pointerdown', e=>{
+      dragging = true; moved = 0; lastX = e.clientX;
+      scroll.classList.add('dragging');
+      scroll.setPointerCapture(e.pointerId);
+    });
+    scroll.addEventListener('pointermove', e=>{
+      if(!dragging) return;
+      const dx = e.clientX - lastX; lastX = e.clientX;
+      moved += Math.abs(dx);
+      offset -= dx;
+    });
+    const endDrag = ()=>{ dragging = false; scroll.classList.remove('dragging'); };
+    scroll.addEventListener('pointerup', endDrag);
+    scroll.addEventListener('pointercancel', endDrag);
+    scroll.addEventListener('click', e=>{ if(moved > 5){ e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
+    scroll.addEventListener('wheel', e=>{
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if(d){ offset += d; e.preventDefault(); }
+    }, {passive:false});
   };
   ticker('metasTrack', METAS);
   ticker('chainsTrack', CHAINS6);
