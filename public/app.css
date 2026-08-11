@@ -481,7 +481,7 @@ body.sb-expanded .sb-btn .tip{display:none}
   transform:scaleX(0);transform-origin:left}
 .wipe.in{transform:scaleX(1);transition:transform .26s cubic-bezier(.7,0,.2,1)}
 .wipe.out{transform:scaleX(0);transform-origin:right;transition:transform .3s cubic-bezier(.7,0,.2,1)}
-.wipe::after{content:'';position:absolute;top:0;bottom:0;right:0;width:2px;background:var(--accent)}
+.wipe::after{content:'';position:absolute;top:0;bottom:0;right:0;width:1px;background:var(--line)}
 .wipe.out::after{right:auto;left:0}
 .wipe-tag{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--ink-mute);
